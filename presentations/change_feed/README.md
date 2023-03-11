@@ -104,29 +104,23 @@ while (!cursor.isExhausted()) {
 - **Azure Functions Core Tools** - Command-line tools for local development and testing
 
 <p align="center">
-    <img src="../img/azure-functions-core-tools.png" width="90%">
+    <img src="../img/azure-functions-core-tools.png" width="60%">
 </p>
 
-```
-$ func init
-Select a number for worker runtime:
-1. dotnet
-2. dotnet (isolated process)
-3. node
-4. python
-5. powershell
-6. custom
+-
 
-...
-```
+#### Creating a new Azure Function with Core Tools
+
+<p align="center">
+    <img src="../img/func-init.png" width="80%">
+</p>
 
 ---
 
-### Cosmos DB Change-Feed Functions in this Repo
+### Cosmos DB Change-Feed Azure Functions in this Repo
 
 - other/functions/changefeed/dotnet directory
 - other/functions/changefeed/node directory
-
 
 ---
 
