@@ -65,7 +65,7 @@ while (!cursor.isExhausted()) {
 
 
 <p align="center">
-    <img src="../img/java-change-stream-example.png" width="100%">
+    <img src="../img/java-change-stream-example.png" width="90%">
 </p>
 
 - Links
@@ -104,7 +104,7 @@ while (!cursor.isExhausted()) {
 - **Azure Functions Core Tools** - Command-line tools for local development and testing
 
 <p align="center">
-    <img src="../img/azure-functions-core-tools.png" width="60%">
+    <img src="../img/azure-functions-core-tools.png" width="70%">
 </p>
 
 -
@@ -112,7 +112,7 @@ while (!cursor.isExhausted()) {
 #### Creating a new Azure Function with Core Tools
 
 <p align="center">
-    <img src="../img/func-init.png" width="80%">
+    <img src="../img/func-init.png" width="50%">
 </p>
 
 ---
