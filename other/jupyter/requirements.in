@@ -1,0 +1,14 @@
+arrow
+azure-cosmos
+Faker
+jupyter
+pandas
+matplotlib
+openpyxl
+pymongo
+requests
+Seaborn
+#gremlinpython==3.4.10
+gremlinpython
+tornado==6.1
+nest_asyncio

@@ -1,0 +1,46 @@
+<project name="copySource" default="copySource" basedir=".">
+
+    <description>
+        Apache Ant script to copy the common "master" Java source code
+        in this repo to the several subprojects which use it.
+        
+        Usage: ant -f copy_common_java.xml
+
+        Chris Joakim, Microsoft
+    </description>
+
+    <!-- ******************************************************************* -->
+
+    <target name="copySource">
+        <copy todir="apis/cassandra/java/app/src/main/java" >
+            <fileset dir="common/code/java/app/src/main/java" includes="**/*.java"/>
+        </copy>
+
+        <copy todir="apis/mongo/java/app/src/main/java" >
+            <fileset dir="common/code/java/app/src/main/java" includes="**/*.java"/>
+        </copy>
+
+        <copy todir="apis/nosql/java/app/src/main/java" >
+            <fileset dir="common/code/java/app/src/main/java" includes="**/*.java"/>
+        </copy>
+
+        <copy todir="apis/nosql/javaspring/app/src/main/java" >
+            <fileset dir="common/code/java/app/src/main/java" includes="**/*.java"/>
+        </copy>
+
+        <copy todir="apis/pg/java/app/src/main/java" >
+            <fileset dir="common/code/java/app/src/main/java" includes="**/*.java"/>
+        </copy>
+
+        <!--  Delete the common App.json files that were copied to the subprojects.     -->
+        <!--  Each of these subprojects has their own App.json file in another package. -->
+        <delete file="apis/cassandra/java/app/src/main/java/org/cjoakim/cosmosdb/App.java"/>
+        <delete file="apis/mongo/java/app/src/main/java/org/cjoakim/cosmosdb/App.java"/>
+        <delete file="apis/nosql/java/app/src/main/java/org/cjoakim/cosmosdb/App.java"/>
+        <delete file="apis/nosql/javaspring/app/src/main/java/org/cjoakim/cosmosdb/App.java"/>
+        <delete file="apis/pg/java/app/src/main/java/org/cjoakim/cosmosdb/App.java"/>
+
+        <echo message="done" />
+    </target>
+
+</project>

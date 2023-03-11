@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Generate simulated and correlated "ecommerce retail" datasets 
+# consisting of products, stores, customers, orders, and line items.
+# These are for loading into CosmosDB with the DotnetConsoleApp.
+# Chris Joakim, Microsoft
+
+mkdir -p retail
+rm retail/*.*
+
+source venv/bin/activate
+python --version
+
+python retail_data_gen.py create_product_catalog 12 20 90 
+python retail_data_gen.py create_stores 100
+python retail_data_gen.py create_customers 10000
+python retail_data_gen.py create_sales_data 2021-01-01 2022-02-17 75 3
+
+python retail_data_gen.py slice_sales_data 2023-01-18
+
+echo 'removing sales.json, it was just split into two files ...'
+rm retail/sales.json
+
+echo 'creating retail_dataset.zip ...'
+cd retail
+
+rm *.zip
+jar cvf retail_dataset.zip *.*
+
+cd ..
+
+echo 'done'

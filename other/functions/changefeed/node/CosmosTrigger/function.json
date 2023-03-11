@@ -1,0 +1,14 @@
+{
+  "bindings": [
+    {
+      "type": "cosmosDBTrigger",
+      "name": "documents",
+      "direction": "in",
+      "leaseCollectionName": "leases",
+      "connectionStringSetting": "AZURE_COSMOSDB_NOSQL_CONN_STRING1",
+      "databaseName": "retail",
+      "collectionName": "sales",
+      "createLeaseCollectionIfNotExists": true
+    }
+  ]
+}

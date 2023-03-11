@@ -1,0 +1,20 @@
+<project name="copySource" default="copySource" basedir=".">
+
+    <description>
+        Apache Ant script to copy the common "master" JavaScript/Node.js source code
+        in this repo to the several subprojects which use it.
+        
+        Usage: ant -f copy_common_node.xml
+
+        Chris Joakim, Microsoft
+    </description>
+
+    <!-- ******************************************************************* -->
+
+    <target name="copySource">
+
+        <echo message="TODO: not yet implemented" />
+
+    </target>
+
+</project>

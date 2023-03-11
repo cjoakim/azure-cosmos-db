@@ -1,0 +1,53 @@
+<project name="copySource" default="copySource" basedir=".">
+
+    <description>
+        Apache Ant script to copy the common "master" Python source code
+        in this repo to the several subprojects which use it.
+        
+        Usage: ant -f copy_common_py.xml
+
+        Chris Joakim, Microsoft
+    </description>
+
+    <!-- ******************************************************************* -->
+
+    <target name="copySource">
+
+        <delete dir="common/code/python/pysrc/__pycache__"/>
+
+        <!-- copy to apis/nosql/python -->
+        <mkdir  dir="apis/nosql/python/pysrc"/>
+        <copy todir="apis/nosql/python/pysrc">
+            <fileset dir="common/code/python/pysrc">
+                <exclude name="**/readme.md"/>
+            </fileset>
+        </copy>
+
+        <!-- copy to apis/mongo/python -->
+        <mkdir  dir="apis/mongo/python/pysrc"/>
+        <copy todir="apis/mongo/python/pysrc">
+            <fileset dir="common/code/python/pysrc">
+                <exclude name="**/readme.md"/>
+            </fileset>
+        </copy>
+
+        <!-- copy to apis/cassandra/python -->
+        <mkdir  dir="apis/cassandra/python/pysrc"/>
+        <copy todir="apis/cassandra/python/pysrc">
+            <fileset dir="common/code/python/pysrc">
+                <exclude name="**/readme.md"/>
+            </fileset>
+        </copy>
+
+        <!-- copy to apis/pg/python -->
+        <mkdir  dir="apis/pg/python/pysrc"/>
+        <copy todir="apis/pg/python/pysrc">
+            <fileset dir="common/code/python/pysrc">
+                <exclude name="**/readme.md"/>
+            </fileset>
+        </copy>
+
+        <echo message="done" />
+    </target>
+
+</project>

@@ -1,0 +1,14 @@
+
+rootProject.name = 'playground-parent-project'
+
+// This application contains common code that is copied to the other apps
+include 'common:code:java:app'
+
+// These are the API-specific projects
+include 'apis:cassandra:java:app'
+include 'apis:mongo:java:app'
+include 'apis:nosql:java:app'
+include 'apis:nosql:javaspring:app'
+include 'apis:pg:java:app'
+
+// $ gradle -q projects

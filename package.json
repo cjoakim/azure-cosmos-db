@@ -1,0 +1,28 @@
+{
+  "name": "repo-helper",
+  "version": "1.0.0",
+  "description": "node.js code to stub-out directories and files for this repo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cjoakim/azure-cosmos-db.git"
+  },
+  "keywords": [
+    "repo",
+    "directory",
+    "structure",
+    "initialization"
+  ],
+  "author": "Chris Joakim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cjoakim/azure-cosmos-db/issues"
+  },
+  "homepage": "https://github.com/cjoakim/azure-cosmos-db#readme",
+  "directories": {
+    "doc": "docs"
+  }
+}
