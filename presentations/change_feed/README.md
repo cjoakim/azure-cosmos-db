@@ -8,6 +8,10 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 
 ## Cosmos DB Change Feed
 
+<p align="center">
+    <img src="../img/change-feed.png" width="90%">
+</p>
+
 **The change feed in Azure Cosmos DB is a persistent record of changes to a container in the order they occur**
 
 **The persisted changes can be processed asynchronously and incrementally, and the output can be distributed across one or more consumers for parallel processing**
@@ -27,11 +31,13 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 
 ### Mongo API 
 
-**Change feed support in Azure Cosmos DB’s API for MongoDB is available by using the change streams API.** 
+**Change feed support in Azure Cosmos DB’s API for MongoDB is available by using the Change Streams API.** 
 
 **By using the change streams API, your applications can get the changes made to the collection or to the items in a single shard. Changes to the items in the collection are captured in the order of their modification time and the sort order is guaranteed per shard key.**
 
 **With the Mongo API use application code, rather than an Azure Function, to consume the stream.**
+
+**There is not currently support for Azure Functions triggers to process change streams.**
 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/change-streams?tabs=java
@@ -59,13 +65,12 @@ while (!cursor.isExhausted()) {
 
 
 <p align="center">
-    <img src="../img/java-change-stream-example.png" width="60%">
+    <img src="../img/java-change-stream-example.png" width="100%">
 </p>
 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/change-streams?tabs=java
   - https://github.com/Azure-Samples/azure-cosmos-db-mongodb-java-changestream/blob/main/mongostream/src/main/java/com/azure/cosmos/mongostream/App.java
-
 
 ---
 
