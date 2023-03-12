@@ -33,11 +33,9 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 
 **Change feed support in Azure Cosmos DB’s API for MongoDB is available by using the Change Streams API.** 
 
-**By using the change streams API, your applications can get the changes made to the collection or to the items in a single shard. Changes to the items in the collection are captured in the order of their modification time and the sort order is guaranteed per shard key.**
-
 **With the Mongo API use application code, rather than an Azure Function, to consume the stream.**
 
-**There is not currently support for Azure Functions triggers to process change streams.**
+**There is currently no support for Azure Functions triggers to process change streams.**
 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/change-streams?tabs=java
@@ -80,51 +78,82 @@ while (!cursor.isExhausted()) {
     <img src="../img/vehicle-toll-pass.png" width="50%">
 </p>
 
-### Python App to Emit Similated Vehiche Telemetry
+### Python App to Emit Similated Vehicle Transponder Telemetry
 
 See the **apis/mongo/python/** directory in this repo.  
 
 #### Start the program
 
 ```
-cd apis\mongo\python                <-- change to this directory in this repo
-.\venv\Scripts\Activate.ps1         <-- activate the Python virtual environment (venv)
+.\venv\Scripts\Activate.ps1    <-- activate the Python virtual environment (venv)
 
-python main.py create_customer_activity_stream <sleep_secs> <doc_count>   <-- command line format
+python main.py create_customer_activity_stream <sleep_secs> <doc_count>    <-- command-line format
 
-python main.py create_customer_activity_stream 1.5 100
-```
+python main.py create_customer_activity_stream 1.5 100    <-- execute the program
 
-**Sample Document Inserted into Cosmos DB**
-
-```
+create_customer_activity_stream; sleep_secs: 3.0, doc_count: 4
+connecting to cosmosdb ...
 {
-  "pk": "GB10YZDC84842796883274",
-  "utc_time": "2023-03-12 15:46:12.456517",
-  "transponder": "GB10YZDC84842796883274",
+  "conn_string": "mongodb://gbbcjmongo:esv5gA83NCZRx2mkkJabWpssh1rOGNTSIB3k550yqUu8Fl8YidFTG2nyDY8KRzJIN5KYk1tEj5jZACDbKyyqaA==@gbbcjmongo.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@gbbcjmongo@",
+  "verbose": true
+}
+Database(MongoClient(host=['gbbcjmongo.mongo.cosmos.azure.com:10255'], document_class=dict, tz_aware=False, connect=True, ssl=True, replicaset='globaldb', retrywrites=False, maxidletimems=120000, appname='@gbbcjmongo@'), 'dev')
+1678641808
+
+...
+
+---
+{
+  "pk": "GB10JZTF50009988214118",
+  "utc_time": "2023-03-12 17:23:41.196935",
+  "transponder": "GB10JZTF50009988214118",
   "location": [
-    "40.34912",
-    "-111.90466",
-    "Saratoga Springs",
+    "28.54944",
+    "-81.77285",
+    "Clermont",
     "US",
-    "America/Denver"
+    "America/New_York"
   ],
   "vehicle": {
-    "Year": 1992,
-    "Make": "Dodge",
-    "Model": "Caravan Cargo",
-    "Category": "Van/Minivan"
+    "Year": 1997,
+    "Make": "Mercedes-Benz",
+    "Model": "E-Class",
+    "Category": "Sedan"
   },
-  "plate": "0JF 068"
+  "plate": "234LB"
 }
+insert_doc; id: 640e0a9db64d3c25a151f8b3 -> {'pk': 'GB10JZTF50009988214118', 'utc_time': '2023-03-12 17:23:41.196935', 'transponder': 'GB10JZTF50009988214118', 'location': ('28.54944', '-81.77285', 'Clermont', 'US', 'America/New_York'), 'vehicle': {'Year': 1997, 'Make': 'Mercedes-Benz', 'Model': 'E-Class', 'Category': 'Sedan'}, 'plate': '234LB', '_id': ObjectId('640e0a9db64d3c25a151f8b3')}
 ```
 
-### Java App to Consume the Change-Stream
+### Python App to Consume the Change-Stream
 
-See the **apis/mongo/java/app/** directory in this repo.   TODO
+See the **apis/mongo/python/** directory in this repo (same directory as above emitter)
+
+See https://www.mongodb.com/developer/languages/python/python-change-streams/
 
 ```
-gradle consumeChangeStream    TODO
+python change_stream_consumer.py consume dev vehicle_activity
+
+consuming change stream for db: dev, container: vehicle_activity
+-
+MongoClient(host=['gbbcjmongo.mongo.cosmos.azure.com:10255'], document_class=dict, tz_aware=False, connect=True, ssl=True, replicaset='globaldb', retrywrites=False, maxidletimems=120000, appname='@gbbcjmongo@')
+-
+Database(MongoClient(host=['gbbcjmongo.mongo.cosmos.azure.com:10255'], document_class=dict, tz_aware=False, connect=True, ssl=True, replicaset='globaldb', retrywrites=False, maxidletimems=120000, appname='@gbbcjmongo@'), 'dev')
+-
+Collection(Database(MongoClient(host=['gbbcjmongo.mongo.cosmos.azure.com:10255'], document_class=dict, tz_aware=False, connect=True, ssl=True, replicaset='globaldb', retrywrites=False, maxidletimems=120000, appname='@gbbcjmongo@'), 'dev'), 'vehicle_activity')
+starting to watch the change stream ...
+
+...
+
+---
+change event:
+{'_id': {'_data': b'{"V":2,"Rid":"yPVsAJ5rJtA=","Continuation":[{"FeedRange":{"type":"Effective Partition Key Range","value":{"min":"","max":"FF"}},"State":{"type":"continuation","value":"\\"735\\""}}]}', '_kind': 1}, 'fullDocument': {'_id': ObjectId('640e0a9db64d3c25a151f8b3'), 'pk': 'GB10JZTF50009988214118', 'utc_time': '2023-03-12 17:23:41.196935', 'transponder': 'GB10JZTF50009988214118', 'location': ['28.54944', '-81.77285', 'Clermont', 'US', 'America/New_York'], 'vehicle': {'Year': 1997, 'Make': 'Mercedes-Benz', 'Model': 'E-Class', 'Category': 'Sedan'}, 'plate': '234LB'}, 'ns': {'db': 'dev', 'coll': 'vehicle_activity'}, 'documentKey': {'pk': 'GB10JZTF50009988214118', '_id': ObjectId('640e0a9db64d3c25a151f8b3')}}
+ns:
+{'db': 'dev', 'coll': 'vehicle_activity'}
+documentKey:
+{'pk': 'GB10JZTF50009988214118', '_id': ObjectId('640e0a9db64d3c25a151f8b3')}
+fullDocument:
+{'_id': ObjectId('640e0a9db64d3c25a151f8b3'), 'pk': 'GB10JZTF50009988214118', 'utc_time': '2023-03-12 17:23:41.196935', 'transponder': 'GB10JZTF50009988214118', 'location': ['28.54944', '-81.77285', 'Clermont', 'US', 'America/New_York'], 'vehicle': {'Year': 1997, 'Make': 'Mercedes-Benz', 'Model': 'E-Class', 'Category': 'Sedan'}, 'plate': '234LB'}
 ```
 
 ---

@@ -161,6 +161,7 @@ def create_customer_activity_stream():
 
     for n in range(0, doc_count):
         time.sleep(sleep_secs)
+        print('---')
         doc = dict()
         tid = f.iban()
         doc['pk'] = tid
@@ -170,7 +171,8 @@ def create_customer_activity_stream():
         doc['vehicle'] = f.vehicle_object()
         doc['plate'] = f.license_plate()
         print(json.dumps(doc, sort_keys=False, indent=2))
-
+        result = m.insert_doc(doc)
+        print('insert_doc; id: {} -> {}'.format(str(result.inserted_id), str(doc)))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
