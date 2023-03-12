@@ -29,6 +29,29 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
     <img src="../img/mongo-api-new-collection-dialog-portal.png" width="40%">
 </p>
 
+```
+db.getCollection("customer_activity").getIndexes()
+
+[
+    {
+        "v" : 1.0,
+        "key" : {
+            "_id" : 1.0
+        },
+        "name" : "_id_",
+        "ns" : "dev.customer_activity"
+    },
+    {
+        "v" : 1.0,
+        "key" : {
+            "$**" : 1.0
+        },
+        "name" : "$**_1",
+        "ns" : "dev.customer_activity"
+    }
+]
+```
+
 ---
 
 ## Indexing Types
