@@ -9,7 +9,7 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 ## Cosmos DB Change Feed
 
 <p align="center">
-    <img src="../img/change-feed.png" width="90%">
+    <img src="../img/change-feed.png" width="70%">
 </p>
 
 **The change feed in Azure Cosmos DB is a persistent record of changes to a container in the order they occur**
@@ -65,7 +65,7 @@ while (!cursor.isExhausted()) {
 
 
 <p align="center">
-    <img src="../img/java-change-stream-example.png" width="90%">
+    <img src="../img/java-change-stream-example.png" width="70%">
 </p>
 
 - Links
@@ -77,7 +77,7 @@ while (!cursor.isExhausted()) {
 ## Demonstration Application - Vehicle Transponder Events
 
 <p align="center">
-    <img src="../img/vehicle-toll-pass.png" width="90%">
+    <img src="../img/vehicle-toll-pass.png" width="70%">
 </p>
 
 ### Python App to Emit Similated Vehiche Telemetry
@@ -90,7 +90,7 @@ See the **apis/mongo/python/** directory in this repo.
 cd apis\mongo\python                <-- change to this directory in this repo
 .\venv\Scripts\Activate.ps1         <-- activate the Python virtual environment (venv)
 
-python main.py create_customer_activity_stream <sleep_secs> <doc_count>
+python main.py create_customer_activity_stream <sleep_secs> <doc_count>   <-- command line format
 
 python main.py create_customer_activity_stream 1.5 100
 ```
