@@ -109,9 +109,48 @@ db.coll.createIndex( { "$**" : 1 } )
 
 ---
 
-## MongoMigrationAssessment.exe (MMA) Sample Outputs
+## MongoMigrationAssessment.exe (MMA) Sample Index Advice
 
-TODO
+#### Warning: Unique Index
+
+Unique indexes can only be created on empty collections currently in Azure Cosmos DB API for MongoDB v4.2. Please make sure you migrate the data to Cosmos DB after creating the index. Functionality to create unique indexes on non-empty collections will be available soon.
+
+#### Warning: Partial Index
+
+Partial index with TTL is not supported with Cosmos DB for MongoDB v4.2.
+
+#### Critical: Text Index
+
+Text indexes are currently not supported in Azure Cosmos DB for MongoDB.
+We recommend using Azure Cognitive Search for full text search and advanced search features like wildcard search etc.
+
+#### Critical: Compound Index on Nested field
+
+Compound indexes with nested fields are not fully supported in Azure Cosmos DB for MongoDB v4.2.
+If you are using compound index where the nested fields are docs (not arrays), you may enable the
+<a href=\"https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities\"> capability </a>
+on your Cosmos DB account.
+
+#### Critical: Sparse Index
+
+Sparse indexes are not supported with Cosmos DB for MongoDB v4.2. Consider using partial indexes instead.
+
+#### Critical: Unique Index on Nested field
+
+Unique indexes with nested fields are not fully supported in Azure Cosmos DB API for MongoDB v4.2.
+If you are using unique index where the nested fields are docs (not arrays), you may enable the
+<a href=\"https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities\"> capability </a>
+on your Cosmos DB account.
+
+#### Critical: TTL Index
+
+Cosmos DB for MongoDB v4.2 does not support creating TTL indexes on multiple fields.
+You may only create TTL index on one field per collection.
+
+#### Critical: Compound Index fields size
+
+Cosmos DB API for MongoDB v4.2 supports a maximum of 8 fields in a compound index.
+You would need to reduce the number of fields in the compound index.
 
 ---
 
