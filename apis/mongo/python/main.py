@@ -160,7 +160,7 @@ def create_customer_activity_stream():
     f.add_provider(VehicleProvider)
 
     for n in range(0, doc_count):
-        print(n)
+        time.sleep(sleep_secs)
         doc = dict()
         tid = f.iban()
         doc['pk'] = tid

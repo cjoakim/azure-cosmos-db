@@ -74,14 +74,49 @@ while (!cursor.isExhausted()) {
 
 --- 
 
-## Demonstration Application
+## Demonstration Application - Vehicle Transponder Events
 
-### Python App to Update Cosmos DB
+<p align="center">
+    <img src="../img/vehicle-toll-pass.png" width="90%">
+</p>
+
+### Python App to Emit Similated Vehiche Telemetry
 
 See the **apis/mongo/python/** directory in this repo.  
 
+#### Start the program
+
 ```
-python main.py xxx     TODO
+cd apis\mongo\python                <-- change to this directory in this repo
+.\venv\Scripts\Activate.ps1         <-- activate the Python virtual environment (venv)
+
+python main.py create_customer_activity_stream <sleep_secs> <doc_count>
+
+python main.py create_customer_activity_stream 1.5 100
+```
+
+**Sample Document Inserted into Cosmos DB**
+
+```
+{
+  "pk": "GB10YZDC84842796883274",
+  "utc_time": "2023-03-12 15:46:12.456517",
+  "transponder": "GB10YZDC84842796883274",
+  "location": [
+    "40.34912",
+    "-111.90466",
+    "Saratoga Springs",
+    "US",
+    "America/Denver"
+  ],
+  "vehicle": {
+    "Year": 1992,
+    "Make": "Dodge",
+    "Model": "Caravan Cargo",
+    "Category": "Van/Minivan"
+  },
+  "plate": "0JF 068"
+}
 ```
 
 ### Java App to Consume the Change-Stream
