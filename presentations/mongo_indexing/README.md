@@ -201,12 +201,17 @@ Output:
 
 See https://learn.microsoft.com/en-us/azure/cosmos-db/automated-recommendations
 
+<p align="center">
+    <img src="../img/cosmosdb-view-recommendations.png" width="90%">
+</p>
+
 ---
 
 ## Further Reading
 
 Please see the **Azure Cosmos DB for MongoDB documentation** at https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/
 
+---
 ---
 
 <p align="center">
