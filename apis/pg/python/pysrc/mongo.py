@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 # This class is used to access a MongoDB database, including the CosmosDB Mongo API.
-# Chris Joakim, Microsoft
+# Chris Joakim, Microsoft, 2023/03/12
 
 # pip install pymongo
 # https://pymongo.readthedocs.io/en/stable/
@@ -20,11 +20,18 @@ class Mongo(object):
         self._opts = opts
         self._db = None
         self._coll = None
-        print(self._opts)
-        host = opts['host']
-        port = opts['port']
-        self._client = MongoClient(host, port)
-        print(self._client)
+        if 'conn_string' in self._opts.keys():
+            self._client = MongoClient(opts['conn_string'])
+        else:
+            self._client = MongoClient(opts['host'], opts['port'])
+
+        if self.is_verbose():
+            print(json.dumps(self._opts, sort_keys=False, indent=2))
+ 
+    def is_verbose(self):
+        if 'verbose' in self._opts.keys():
+            return self._opts['verbose']
+        return False
 
     def list_databases(self):
         return self._client.list_database_names()
@@ -39,7 +46,6 @@ class Mongo(object):
 
     def set_coll(self, collname):
         self._coll = self._db[collname]
-        print(self._coll)
         return self._coll 
 
     def insert_doc(self, doc):
@@ -73,6 +79,16 @@ class Mongo(object):
 
     def count_docs(self, query_spec):
         return self._coll.count_documents(query_spec)
+
+    def last_request_stats(self):
+        return self._db.command({'getLastRequestStatistics': 1})
+
+    def last_request_request_charge(self):
+        stats = self.last_request_stats()
+        if stats == None:
+            return -1
+        else:
+            return stats['RequestCharge']
 
     def client(self):
         return self._client

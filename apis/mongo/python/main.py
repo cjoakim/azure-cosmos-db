@@ -35,17 +35,40 @@ def check_env():
     print('AZURE_COSMOSDB_MONGODB_PASS: {}'.format(Env.var('AZURE_COSMOSDB_MONGODB_PASS')))
     print('AZURE_COSMOSDB_MONGODB_CONN_STRING: {}'.format(Env.var('AZURE_COSMOSDB_MONGODB_CONN_STRING')))
 
+    opts = dict()
+    opts['conn_string'] = Env.var('AZURE_COSMOSDB_MONGODB_CONN_STRING')
+    opts['verbose'] = True
+    m = Mongo(opts)
+    print('databases found: {}'.format(m.list_databases()))
+    #print('last request charge: '.format(m.last_request_request_charge()))
+
 def test_suite():
     opts = dict()
-    opts['host'] = 'localhost'
-    opts['port'] = 27017
+    opts['conn_string'] = Env.var('AZURE_COSMOSDB_MONGODB_CONN_STRING')
+    opts['verbose'] = True
     m = Mongo(opts)
     db = m.set_db('dev')
     coll = m.set_coll('movies')
     movies = FS.read_json('data/movies.json')
     keys = sorted(movies.keys())
+
+    print('list_collections ...')
+    print(m.list_collections())
+
+    print('list_databases ...')
+    print(m.list_databases())
+
+    print('count_docs initial ...')
+    print(m.count_docs({}))
+
+    print('delete_many doctype movie ...')
+    print(m.delete_many({"doctype": 'movie'}))
+
+    print('count_docs after deletes ...')
+    print(m.count_docs({}))
+
     for idx, key in enumerate(keys):
-        if idx < 999999:
+        if idx < 40:
             data = dict()
             data['pk'] = key
             data['title_id'] = key
@@ -56,34 +79,57 @@ def test_suite():
             else:
                 data['top10'] = False
             print(json.dumps(data))
-            #result = m.insert_doc(data)
-            #print('{} -> {}'.format(str(result.inserted_id), str(data)))
-            print(data)
-    # print(m.list_collections())
-    # print(m.list_databases())
-    # print(m.find_one({"title": 'Footloose'}))
-    # print(m.find_one({"title": 'Not There'}))
-    # print(m.find_by_id('5ea575f08bd3a96405ea6366'))
+            result = m.insert_doc(data)
+            print('insert_doc; id: {} -> {}'.format(str(result.inserted_id), str(data)))
+            time.sleep(0.05)
 
-    # um = m.update_many({"top10": True}, {'$set': {"rating": 100, "bacon": False}}, False)
-    # print(um)
-    # fl2 = m.update_one({"title": 'Footloose'}, {'$set': {"rating": 100, "bacon": True}}, False) # update_one(filter, update, upsert)
-    # print(fl2)
-    # fl3 = m.find_one({"title": 'Footloose'})
-    # print(fl3)
-    # cursor = m.find({"top10": True})
-    # for doc in cursor:
-    #     print(doc)
+    print('count_docs after inserts ...')
+    print(m.count_docs({}))
 
-    # print(m.count_docs({}))
-    # print(m.count_docs({"title": 'Footloose'}))
-    # print(m.delete_by_id('5ea575f08bd3a96405ea6366'))
-    # print(m.count_docs({}))
-    # print(m.delete_one({"title": 'The Money Pit'}))
-    # print(m.count_docs({}))
-    # print(m.delete_many({"doctype": 'movie'}))
-    # print(m.count_docs({}))
+    print('find_one({"title": "Footloose"}) ...')
+    print(m.find_one({"title": "Footloose"}))
 
+    print('find_one({"title": "Not There"}) ...')
+    print(m.find_one({"title": "Not There"}))
+
+    print('find_by_id ...')
+    print(m.find_by_id('5ea575f08bd3a96405ea6366'))
+
+    print('update_many ...')
+    um = m.update_many({"top10": True}, {'$set': {"rating": 100, "bacon": False}}, False)
+    print(um)
+
+    print('update_one ...')
+    fl2 = m.update_one({"title": 'Footloose'}, {'$set': {"rating": 100, "bacon": True}}, False) # update_one(filter, update, upsert)
+    print(fl2)
+
+    print('find_one({"title": "Footloose"}) ...')
+    fl3 = m.find_one({"title": 'Footloose'})
+    print(fl3)
+
+    print('find({"top10": True})')
+    cursor = m.find({"top10": True})
+    for doc in cursor:
+        print(doc)
+
+    print('count_docs title Footloose ...')
+    print(m.count_docs({"title": 'Footloose'}))
+
+    print(m.delete_one({"title": 'The Money Pit'}))
+
+    print('find_one({"title": "Silverado"}) ...')
+    sv = m.find_one({"title": 'Silverado'})
+    print(sv)
+
+    print('delete_by_id Silverado ...')
+    print(m.delete_by_id(sv['_id']))
+
+    print('find_one({"title": "Silverado"}) ...')
+    sv = m.find_one({"title": 'Silverado'})
+    print(sv)
+
+    print('count_docs final ...')
+    print(m.count_docs({}))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

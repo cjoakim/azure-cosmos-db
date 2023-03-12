@@ -23,6 +23,11 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 - Index updates/progress can be tracked (see link below)
 - **Just like MongoDB, Cosmos DB requires efficient indexes for your applications to perform well**
 - The Cosmos DB NoSQL API offers indexing on all fields by default, but **not** the Mongo API
+- However, you can create a wildcard index when you create a container like this (see checkbox):
+
+<p align="center">
+    <img src="../img/mongo-api-new-collection-dialog-portal.png" width="90%">
+</p>
 
 ---
 
