@@ -1,8 +1,9 @@
-# Chris Joakim, Microsoft, 2022/08/30
+# Chris Joakim, Microsoft, 2023/03/12
 
 arrow
 azure-cosmos
 docopt
+Faker
 flake8
 pipdeptree
 pymongo
