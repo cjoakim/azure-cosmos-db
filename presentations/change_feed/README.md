@@ -137,6 +137,7 @@ while (!cursor.isExhausted()) {
 Please see the **Azure Cosmos DB for MongoDB documentation** at https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/
 
 ---
+---
 
 <p align="center">
     <img src="../img/spacer-500.png" width="90%">
