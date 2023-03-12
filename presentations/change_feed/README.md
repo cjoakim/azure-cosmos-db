@@ -77,7 +77,7 @@ while (!cursor.isExhausted()) {
 ## Demonstration Application - Vehicle Transponder Events
 
 <p align="center">
-    <img src="../img/vehicle-toll-pass.png" width="70%">
+    <img src="../img/vehicle-toll-pass.png" width="50%">
 </p>
 
 ### Python App to Emit Similated Vehiche Telemetry
@@ -159,7 +159,7 @@ gradle consumeChangeStream    TODO
 - **Azure Functions Core Tools** - Command-line tools for local development and testing
 
 <p align="center">
-    <img src="../img/azure-functions-core-tools.png" width="70%">
+    <img src="../img/azure-functions-core-tools.png" width="60%">
 </p>
 
 -
@@ -167,7 +167,7 @@ gradle consumeChangeStream    TODO
 #### Creating a new Azure Function with Core Tools
 
 <p align="center">
-    <img src="../img/func-init.png" width="50%">
+    <img src="../img/func-init.png" width="40%">
 </p>
 
 ---
