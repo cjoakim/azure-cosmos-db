@@ -31,13 +31,13 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 ### Single field
 
 ```
-db.coll.createIndex({name:1})
+db.coll.createIndex( {name : 1} )
 ```
 
 ### Compound
 
 ```
-db.coll.createIndex({name:1,age:1})
+db.coll.createIndex( {name : 1, age : 1} )
 ```
 
 ### Multikey / Array
@@ -48,18 +48,21 @@ If you index a field with an array value, Azure Cosmos DB automatically indexes 
 
 ### Geospatial
 
-Currently, Azure Cosmos DB for MongoDB supports 2dsphere indexes
+Azure Cosmos DB for MongoDB supports **2dsphere** indexes.
 
 ```
-db.coll.createIndex({ location : "2dsphere" })
+db.coll.createIndex( { location : "2dsphere" } )
 ```
+
+- Links:
+  - https://www.mongodb.com/docs/manual/core/2dsphere/
+  - https://www.mongodb.com/docs/manual/geospatial-queries/#std-label-geospatial-geojson
+  - https://www.mongodb.com/docs/manual/reference/geojson/
 
 ### Wildcard
 
-Currently, Azure Cosmos DB for MongoDB supports 2dsphere indexes
-
 ```
-db.coll.createIndex({"children.$**" : 1})
+db.coll.createIndex( {"children.$**" : 1} )
 ```
 
 ### Unique
@@ -69,7 +72,7 @@ db.coll.createIndex({"children.$**" : 1})
 #### Unsharded containers/collections
 
 ```
-db.coll.createIndex( { "student_id" : 1 }, {unique:true} )  <-- no partition key
+db.coll.createIndex( { "student_id" : 1 }, {unique : true } )  <-- no partition key
 ```
 
 #### Sharded containers/collections
@@ -77,7 +80,7 @@ db.coll.createIndex( { "student_id" : 1 }, {unique:true} )  <-- no partition key
 For sharded collections, you must provide the shard (partition) key to create a unique index.
 
 ```
-db.coll.createIndex( { "university" : 1, "student_id" : 1 }, {unique:true});   <-- university is partition key
+db.coll.createIndex( { "university" : 1, "student_id" : 1 }, { unique : true } );   <-- university is partition key
 ```
 
 ### TTL
@@ -85,7 +88,7 @@ db.coll.createIndex( { "university" : 1, "student_id" : 1 }, {unique:true});   <
 A TTL index is an index on the **_ts** field
 
 ```
-db.coll.createIndex({"_ts":1}, {expireAfterSeconds: 10})
+db.coll.createIndex( {"_ts" : 1}, { expireAfterSeconds : 10} )
 ```
 
 See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
@@ -128,8 +131,8 @@ We recommend using Azure Cognitive Search for full text search and advanced sear
 #### Critical: Compound Index on Nested field
 
 Compound indexes with nested fields are not fully supported in Azure Cosmos DB for MongoDB v4.2.
-If you are using compound index where the nested fields are docs (not arrays), you may enable the
-capability on your Cosmos DB account.
+If you are using compound index where the nested fields are docs (not arrays), you may enable the 
+**EnableUniqueCompoundNestedDocs** capability on your Cosmos DB account.  
 See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities
 
 #### Critical: Sparse Index
@@ -139,8 +142,8 @@ Sparse indexes are not supported with Cosmos DB for MongoDB v4.2. Consider using
 #### Critical: Unique Index on Nested field
 
 Unique indexes with nested fields are not fully supported in Azure Cosmos DB API for MongoDB v4.2.
-If you are using unique index where the nested fields are docs (not arrays), you may enable the
-capability on your Cosmos DB account.
+If you are using unique index where the nested fields are docs (not arrays), you may enable the 
+**EnableUniqueCompoundNestedDocs** capability on your Cosmos DB account.
 See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities
 
 #### Critical: TTL Index
@@ -187,8 +190,16 @@ Output:
   $ az cosmosdb update \
       --resource-group <azure_resource_group> \
       --name <azure_cosmos_db_account_name> \
-      --capabilities EnableMongo, DisableRateLimitingResponses
+      --capabilities EnableMongo, DisableRateLimitingResponses    
 ```
+
+---
+
+## Automated Recommendations
+
+**Azure Portal provides recommendations relating to partitioning, indexing, network, security. etc.**
+
+See https://learn.microsoft.com/en-us/azure/cosmos-db/automated-recommendations
 
 ---
 
