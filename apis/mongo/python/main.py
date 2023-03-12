@@ -62,7 +62,9 @@ def test_suite():
     print(m.count_docs({}))
 
     print('delete_many doctype movie ...')
-    print(m.delete_many({"doctype": 'movie'}))
+    delete_result = m.delete_many({"doctype": 'movie'})
+    print(delete_result)
+    print('deleted doc count: {}'.format(delete_result.deleted_count))
 
     print('count_docs after deletes ...')
     print(m.count_docs({}))
@@ -122,7 +124,9 @@ def test_suite():
     print(sv)
 
     print('delete_by_id Silverado ...')
-    print(m.delete_by_id(sv['_id']))
+    delete_result = m.delete_by_id(sv['_id'])
+    print(delete_result)
+    print('deleted doc count: {}'.format(delete_result.deleted_count))
 
     print('find_one({"title": "Silverado"}) ...')
     sv = m.find_one({"title": 'Silverado'})
