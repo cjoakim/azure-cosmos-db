@@ -106,6 +106,7 @@ db.coll.createIndex( { "$**" : 1 } )
 ### Not Supported
 
 - Wildcard indexes on Compound, TTL, or Unique
+- See the list below that is apt to be reported by the MMA tool
 
 ---
 
@@ -128,8 +129,8 @@ We recommend using Azure Cognitive Search for full text search and advanced sear
 
 Compound indexes with nested fields are not fully supported in Azure Cosmos DB for MongoDB v4.2.
 If you are using compound index where the nested fields are docs (not arrays), you may enable the
-<a href=\"https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities\"> capability </a>
-on your Cosmos DB account.
+capability on your Cosmos DB account.
+See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities
 
 #### Critical: Sparse Index
 
@@ -139,8 +140,8 @@ Sparse indexes are not supported with Cosmos DB for MongoDB v4.2. Consider using
 
 Unique indexes with nested fields are not fully supported in Azure Cosmos DB API for MongoDB v4.2.
 If you are using unique index where the nested fields are docs (not arrays), you may enable the
-<a href=\"https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities\"> capability </a>
-on your Cosmos DB account.
+capability on your Cosmos DB account.
+See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities
 
 #### Critical: TTL Index
 
@@ -151,6 +152,43 @@ You may only create TTL index on one field per collection.
 
 Cosmos DB API for MongoDB v4.2 supports a maximum of 8 fields in a compound index.
 You would need to reduce the number of fields in the compound index.
+
+---
+
+## Enable Specific Capabilities on your Cosmos DB Mongo API account 
+
+See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/how-to-configure-capabilities#available-capabilities
+
+<p align="center">
+    <img src="../img/mongo-api-capabilities.png" width="90%">
+</p>
+
+### Use the az CLI to display current capabilities
+
+```
+Command:
+
+  $ az cosmosdb show \
+      --resource-group <azure_resource_group> \
+      --name <azure_cosmos_db_account_name>
+
+Output:
+
+  "capabilities": [
+    {
+      "name": "EnableMongo"
+    }
+  ]
+```
+
+### Update the Capabilities
+
+```
+  $ az cosmosdb update \
+      --resource-group <azure_resource_group> \
+      --name <azure_cosmos_db_account_name> \
+      --capabilities EnableMongo, DisableRateLimitingResponses
+```
 
 ---
 
