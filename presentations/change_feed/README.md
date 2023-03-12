@@ -72,6 +72,26 @@ while (!cursor.isExhausted()) {
   - https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/change-streams?tabs=java
   - https://github.com/Azure-Samples/azure-cosmos-db-mongodb-java-changestream/blob/main/mongostream/src/main/java/com/azure/cosmos/mongostream/App.java
 
+--- 
+
+## Demonstration Application
+
+### Python App to Update Cosmos DB
+
+See the **apis/mongo/python/** directory in this repo.  
+
+```
+python main.py xxx     TODO
+```
+
+### Java App to Consume the Change-Stream
+
+See the **apis/mongo/java/app/** directory in this repo.   TODO
+
+```
+gradle consumeChangeStream    TODO
+```
+
 ---
 
 ## Intro to Azure Functions
