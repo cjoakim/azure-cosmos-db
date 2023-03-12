@@ -131,6 +131,7 @@ def test_suite():
     print('count_docs final ...')
     print(m.count_docs({}))
 
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         cli_func = sys.argv[1].lower()

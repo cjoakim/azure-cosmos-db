@@ -26,7 +26,7 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 - However, you can create a wildcard index when you create a container like this (see checkbox):
 
 <p align="center">
-    <img src="../img/mongo-api-new-collection-dialog-portal.png" width="90%">
+    <img src="../img/mongo-api-new-collection-dialog-portal.png" width="40%">
 </p>
 
 ---
