@@ -30,7 +30,7 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 </p>
 
 ```
-db.getCollection("customer_activity").getIndexes()
+db.getCollection("vehicle_activity").getIndexes()
 
 [
     {
@@ -39,7 +39,7 @@ db.getCollection("customer_activity").getIndexes()
             "_id" : 1.0
         },
         "name" : "_id_",
-        "ns" : "dev.customer_activity"
+        "ns" : "dev.vehicle_activity"
     },
     {
         "v" : 1.0,
@@ -47,10 +47,14 @@ db.getCollection("customer_activity").getIndexes()
             "$**" : 1.0
         },
         "name" : "$**_1",
-        "ns" : "dev.customer_activity"
+        "ns" : "dev.vehicle_activity"
     }
 ]
 ```
+
+<p align="center">
+    <img src="../img/studio-3t-getIndexes.png" width="90%">
+</p>
 
 ---
 

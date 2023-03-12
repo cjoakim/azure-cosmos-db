@@ -4,6 +4,7 @@ arrow
 azure-cosmos
 docopt
 Faker
+faker-vehicle
 flake8
 pipdeptree
 pymongo

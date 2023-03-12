@@ -3,6 +3,8 @@ Usage:
   python main.py <func>
   python main.py env         <-- displays necessary environment variables
   python main.py test_suite  <-- executes a suite of CosmosDB Mongo API operations
+  python main.py create_customer_activity_stream <sleep_secs> <doc_count>
+  python main.py create_customer_activity_stream 0.5 100
 Options:
   -h --help     Show this screen.
   --version     Show version.
@@ -16,7 +18,10 @@ import sys
 import time
 import os
 
+from datetime import datetime
 from docopt import docopt
+from faker import Faker
+from faker_vehicle import VehicleProvider
 
 from pysrc.env import Env
 from pysrc.fs import FS
@@ -135,6 +140,37 @@ def test_suite():
     print('count_docs final ...')
     print(m.count_docs({}))
 
+def create_customer_activity_stream():
+    sleep_secs = float(sys.argv[2])
+    doc_count  = int(sys.argv[3])
+    print('create_customer_activity_stream; sleep_secs: {}, doc_count: {}'.format(
+        sleep_secs, doc_count))
+
+    print('connecting to cosmosdb ...')
+    opts = dict()
+    opts['conn_string'] = Env.var('AZURE_COSMOSDB_MONGODB_CONN_STRING')
+    opts['verbose'] = True
+    m = Mongo(opts)
+    db = m.set_db('dev')
+    coll = m.set_coll('vehicle_activity')
+
+    print(int(time.time()))
+    Faker.seed(int(time.time()))
+    f = Faker()
+    f.add_provider(VehicleProvider)
+
+    for n in range(0, doc_count):
+        print(n)
+        doc = dict()
+        tid = f.iban()
+        doc['pk'] = tid
+        doc['utc_time'] = str(datetime.utcnow())  #time.time()
+        doc['transponder'] = tid
+        doc['location'] = f.local_latlng()
+        doc['vehicle'] = f.vehicle_object()
+        doc['plate'] = f.license_plate()
+        print(json.dumps(doc, sort_keys=False, indent=2))
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -143,6 +179,8 @@ if __name__ == "__main__":
             check_env()
         elif cli_func == 'test_suite':
             test_suite()
+        elif cli_func == 'create_customer_activity_stream':
+            create_customer_activity_stream()
         else:
             print_options('Error: invalid command-line function: {}'.format(cli_func))
     else:
