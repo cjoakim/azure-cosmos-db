@@ -40,21 +40,19 @@ This is the directory structure of this repo.
 ├── data
 |     └── common
 ├── docs
-|     └── img
 └── other
 |   ├── emulator
 |   ├── jupyter
 |   ├── kusto
 |   ├── search
-|   |     └── python               (see https://github.com/cjoakim/azure-cognitive-search-example)
+|   |     └── python           (see https://github.com/cjoakim/azure-cognitive-search-example)
 |   ├── server_side
-|   └── synapse                    (see https://github.com/cjoakim/azure-cosmosdb-synapse-link)
+|   └── synapse                (see https://github.com/cjoakim/azure-cosmosdb-synapse-link)
 |       ├── adf
 |       └── spark
 └── presentations
     ├── change_feed
     ├── global_distribution
-    ├── img
     ├── mongo_indexing
     ├── mongo_sdks_patterns
     └── synapse_link
