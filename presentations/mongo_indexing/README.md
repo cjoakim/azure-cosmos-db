@@ -140,7 +140,7 @@ db.coll.createIndex( { "$**" : 1 } )
 
 ### Not Supported
 
-- Wildcard indexes on Compound, TTL, or Unique
+- Wildcard indexes on Compound, TTL, or Unique indexes
 - See the list below that is apt to be reported by the MMA tool
 
 ---
