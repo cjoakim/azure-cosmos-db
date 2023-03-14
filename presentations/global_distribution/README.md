@@ -2,7 +2,24 @@
 
 Chris Joakim, Microsoft, Cosmos DB GBB
 
-This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distribution
+This presentation:
+https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distribution
+
+---
+
+### Azure Regions
+
+<p align="center">
+  <a href="https://infrastructuremap.microsoft.com/explore">
+    <img src="../img/regions-explorer.png" width="60%">
+  </a>
+</p>
+
+- Links
+  - https://infrastructuremap.microsoft.com/explore
+  - https://azure.microsoft.com/en-us/explore/global-infrastructure/geographies/#geographies
+
+**Brazil South** region, with Availability Zones, since 2014, São Paulo State
 
 ---
 
@@ -12,7 +29,7 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 
 ### Azure Cosmos DB transparently replicates the data to all the regions associated with your Azure Cosmos DB account.
 
-### Azure Cosmos DB is a globally distributed database service that's designed to provide low latency, elastic scalability of throughput, well-defined semantics for data consistency, and high availability.
+### Azure Cosmos DB is a globally distributed database service that's designed to provide low latency, elastic scalability of throughput, data consistency, and high availability.
 
 ### In short, if your application needs fast response time anywhere in the world, if it's required to be always online, and needs unlimited and elastic scalability of throughput and storage, you should build your application on Azure Cosmos DB.
 
@@ -54,26 +71,12 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 - Single region --> **99.99%**
 - Single region with AZ --> **99.995%**
 - Multiple region --> **99.999%**
+- Financially Backed
 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/high-availability
   - https://azurecharts.com/sla
-
----
-
-### Azure Regions
-
-<p align="center">
-  <a href="https://infrastructuremap.microsoft.com/explore">
-    <img src="../img/regions-explorer.png" width="60%">
-  </a>
-</p>
-
-- Links
-  - https://infrastructuremap.microsoft.com/explore
-  - https://azure.microsoft.com/en-us/explore/global-infrastructure/geographies/#geographies
-
-**Brazil South** region, with Availability Zones, since 2014, São Paulo State
+  - https://www.microsoft.com/licensing/docs/view/Service-Level-Agreements-SLA-for-Online-Services
 
 ---
 
@@ -129,9 +132,18 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
 
 ---
 
+### Regional Partitioning - Can I distribute my collection by shard/partition key?
+
+For example, partition key A in South America and Partition Key B in Europe.
+
+**No.  All data in a Cosmos DB container is distributed to all regions.**
+
+---
+
 ### Cosmos DB Consistency Levels
 
-**This concept only applies to multi-region Cosmos DB accounts**.
+**This concept only applies to multi-region Cosmos DB accounts** and how the data
+is written to and read from the regions.
 
 Azure Cosmos DB offers **five well-defined consistency levels**. From strongest to weakest, the levels are:
 
@@ -167,6 +179,7 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
   - https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels
   - https://en.wikipedia.org/wiki/PACELC_theorem
   - [Mark Brown - Cosmos Global Distribution Demos](https://github.com/markjbrown/cosmos-global-distribution-demos)
+
 
 #### Cosmos DB Cost Implications of Multi-Region and Consistency Levels
 
