@@ -159,10 +159,8 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
   - Reads are guaranteed to return the most recent committed version of an item
 - **Bounded Staleness**
   - You define the aceptable lag, or staleness
-    - Using either:
-      - The number of versions (K) of the item
-      - The time interval (T) reads might lag behind the writes
-  - Bounded Staleness works best for apps using a single-region write accounts with two or more regions
+    - Either: The number of versions (K) of the item
+    - Or: The time interval (T) reads might lag behind the writes
 - **Session (the default)**
   - Within a single client session, reads are guaranteed to honor the **read-your-writes**
 - **Consistent Prefix**
@@ -185,7 +183,7 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels
   - https://en.wikipedia.org/wiki/PACELC_theorem
-  - [Mark Brown - Cosmos Global Distribution Demos](https://github.com/markjbrown/cosmos-global-distribution-demos)
+  - [Mark Brown - Cosmos Global Distribution Demos](https://github.com/markjbrown/cosmos-global-distribution-demos)  (Shows replication latency)
 
 
 #### Cosmos DB Cost Implications of Multi-Region and Consistency Levels
