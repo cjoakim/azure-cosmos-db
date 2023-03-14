@@ -192,7 +192,7 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
     <img src="../img/consistency-levels-ru-costs.png" width="95%">
 </p>
 
-**In short, (RU * 2) for Strong and Bounded Staleness**
+**In short: (RU * 2) for Strong and Bounded Staleness**
 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels#consistency-levels-and-throughput

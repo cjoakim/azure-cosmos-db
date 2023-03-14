@@ -60,13 +60,13 @@ db.getCollection("vehicle_activity").getIndexes()
 
 ## Indexing Types
 
-### Single field
+### Single Attribute
 
 ```
 db.coll.createIndex( {name : 1} )
 ```
 
-### Compound
+### Compound / Multiple Attributes
 
 ```
 db.coll.createIndex( {name : 1, age : 1} )
@@ -76,11 +76,11 @@ db.coll.createIndex( {name : 1, age : 1} )
 
 Azure Cosmos DB creates multikey indexes to index content stored in arrays.
 
-If you index a field with an array value, Azure Cosmos DB automatically indexes every element in the array.
+If you index a field with an array value, Azure **Cosmos DB automatically indexes every element in the array.**
 
 ### Geospatial
 
-Azure Cosmos DB for MongoDB supports **2dsphere** indexes.
+Azure Cosmos DB for MongoDB supports **2dsphere geospatial** indexes.
 
 ```
 db.coll.createIndex( { location : "2dsphere" } )
@@ -109,7 +109,7 @@ db.coll.createIndex( { "student_id" : 1 }, {unique : true } )  <-- no partition 
 
 #### Sharded containers/collections
 
-For sharded collections, you must provide the shard (partition) key to create a unique index.
+For sharded collections, **you must provide the shard (partition) key to create a unique index.**
 
 ```
 db.coll.createIndex( { "university" : 1, "student_id" : 1 }, { unique : true } );   <-- university is partition key
