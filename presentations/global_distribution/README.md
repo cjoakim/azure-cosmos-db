@@ -38,7 +38,7 @@ https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distri
 ### Azure Physical Infrastructure
 
 - 200+ Data Centers
-- 60+ Azure regions (see map below)
+- 60+ Azure regions
 - 165,000 miles of fiber optic and undersea cable systems
 - See https://azure.microsoft.com/en-us/explore/global-infrastructure/
 
@@ -59,10 +59,17 @@ https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distri
 - **Multiple Regions - with one Write Region**, 1+ Read Regions
 - **Multiple Regions - with multiple Write Regions**
 
+#### Recommendation: Single Write Region with Service-Managed Failover
+
+<p align="center">
+    <img src="../img/tip-hadr-single-write-region.png" width="60%">
+</p>
+
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/
   - https://learn.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally
   - https://azure.microsoft.com/en-us/explore/global-infrastructure/geographies/#overview
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/high-availability
 
 ---
 
@@ -157,7 +164,7 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
       - The time interval (T) reads might lag behind the writes
   - Bounded Staleness works best for apps using a single-region write accounts with two or more regions
 - **Session (the default)**
-  - Within a single client session, reads are guaranteed to honor the read-your-writes
+  - Within a single client session, reads are guaranteed to honor the **read-your-writes**
 - **Consistent Prefix**
   - In all the regions, the reads never see out of order writes for a transactional batch of writes
 - **Eventual**
@@ -168,8 +175,8 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
     <img src="../img/five-consistency-levels.png" width="100%">
 </p>
 
-- You set the default consistency level at the Cosmos DB Account Level
-- You can also override the default consistency level for a specific request
+- You set the **default consistency level at the Cosmos DB Account Level**
+- You can also **override** the default consistency level for a specific request
 
 <p align="center">
     <img src="../img/consistency-relax.png" width="60%">
@@ -196,7 +203,62 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
 
 ---
 
-#### Cosmos DB Conflict Resolution
+#### What do Documents Look Like?
+
+**Mongo API Example:**
+
+```
+{
+	"_id" : ObjectId("640e03d374f91c0cf7885edd"),
+	"pk" : "GB19EKLL76864945389161",
+	"utc_time" : "2023-03-12 16:54:43.367822",
+	"transponder" : "GB19EKLL76864945389161",
+	"location" : [
+		"40.58654",
+		"-122.39168",
+		"Redding",
+		"US",
+		"America/Los_Angeles"
+	],
+	"vehicle" : {
+		"Year" : 2009,
+		"Make" : "Bentley",
+		"Model" : "Arnage",
+		"Category" : "Sedan"
+	},
+	"plate" : "654 IHO"
+}
+```
+
+**NoSQL API Example:**
+
+Notice the several underscored attributes added by Cosmos DB (_rid, _etag, _ts, etc).
+The _etag is for OCC (Optimistic Concurrency Control)
+
+```
+{
+    "id": "ac3a01a0-a52d-480d-bd3f-128b0fb894e4",
+    "pk": "movie_seed",
+    "doctype": "movie_seed",
+    "targetId": "tt11778084",
+    "targetPk": "tt11778084",
+    "adjacentVertices": [
+        "nm3645961"
+    ],
+    "_rid": "gm8hAP8qSX0CAAAAAAAAAA==",
+    "_self": "dbs/gm8hAA==/colls/gm8hAP8qSX0=/docs/gm8hAP8qSX0CAAAAAAAAAA==/",
+    "_etag": "\"03000fe3-0000-0100-0000-63e186160000\"",
+    "_attachments": "attachments/",
+    "_ts": 1675724310
+}
+```
+
+See https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/database-transactions-optimistic-concurrency
+
+---
+
+
+#### Cosmos DB Conflict Resolution (NoSQL API)
 
 **This concept only applies to multi-region multi-writable Cosmos DB accounts**.
 
