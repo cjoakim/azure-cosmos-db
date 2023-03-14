@@ -87,14 +87,14 @@ See the **apis/mongo/python/** directory in this repo.
 ```
 .\venv\Scripts\Activate.ps1    <-- activate the Python virtual environment (venv)
 
-python main.py create_customer_activity_stream <sleep_secs> <doc_count>    <-- command-line format
+python main.py create_vehicle_activity_stream <sleep_secs> <doc_count>    <-- command-line format
 
-python main.py create_customer_activity_stream 1.5 100    <-- execute the program
+python main.py create_vehicle_activity_stream 1.5 100    <-- execute the program
 
-create_customer_activity_stream; sleep_secs: 3.0, doc_count: 4
+create_vehicle_activity_stream; sleep_secs: 1.5, doc_count: 100
 connecting to cosmosdb ...
 {
-  "conn_string": "mongodb://gbbcjmongo:esv5gA83NCZRx2mkkJabWpssh1rOGNTSIB3k550yqUu8Fl8YidFTG2nyDY8KRzJIN5KYk1tEj5jZACDbKyyqaA==@gbbcjmongo.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@gbbcjmongo@",
+  "conn_string": "mongodb://gbbcjmongo:xxx@gbbcjmongo.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@gbbcjmongo@",
   "verbose": true
 }
 Database(MongoClient(host=['gbbcjmongo.mongo.cosmos.azure.com:10255'], document_class=dict, tz_aware=False, connect=True, ssl=True, replicaset='globaldb', retrywrites=False, maxidletimems=120000, appname='@gbbcjmongo@'), 'dev')

@@ -140,10 +140,10 @@ def test_suite():
     print('count_docs final ...')
     print(m.count_docs({}))
 
-def create_customer_activity_stream():
+def create_vehicle_activity_stream():
     sleep_secs = float(sys.argv[2])
     doc_count  = int(sys.argv[3])
-    print('create_customer_activity_stream; sleep_secs: {}, doc_count: {}'.format(
+    print('create_vehicle_activity_stream; sleep_secs: {}, doc_count: {}'.format(
         sleep_secs, doc_count))
 
     print('connecting to cosmosdb ...')
@@ -174,6 +174,7 @@ def create_customer_activity_stream():
         result = m.insert_doc(doc)
         print('insert_doc; id: {} -> {}'.format(str(result.inserted_id), str(doc)))
 
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         cli_func = sys.argv[1].lower()
@@ -181,8 +182,8 @@ if __name__ == "__main__":
             check_env()
         elif cli_func == 'test_suite':
             test_suite()
-        elif cli_func == 'create_customer_activity_stream':
-            create_customer_activity_stream()
+        elif cli_func == 'create_vehicle_activity_stream':
+            create_vehicle_activity_stream()
         else:
             print_options('Error: invalid command-line function: {}'.format(cli_func))
     else:
