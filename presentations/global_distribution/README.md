@@ -11,7 +11,7 @@ https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distri
 
 <p align="center">
   <a href="https://infrastructuremap.microsoft.com/explore">
-    <img src="../img/regions-explorer.png" width="60%">
+    <img src="../img/regions-explorer.png" width="50%">
   </a>
 </p>
 
