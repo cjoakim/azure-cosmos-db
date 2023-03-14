@@ -1,6 +1,6 @@
 # Azure Cosmos DB : Change Feed
 
-Chris Joakim, Microsoft, Cosmos DB GBB
+**Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
 This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/change_feed
 

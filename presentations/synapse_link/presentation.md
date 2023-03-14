@@ -3,7 +3,7 @@
 Demonstration of **Azure CosmosDB** and **Azure Synapse Analytics**
 integration via **Synapse Link**
 
-**Chris Joakim, Microsoft, Global Black Belt (GBB) for NoSQL/CosmosDB**, chjoakim@microsoft.com
+**Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
 The intent of this GitHub repository is both for **presentation purposes** and **working code examples**
 

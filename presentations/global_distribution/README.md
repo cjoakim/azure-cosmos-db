@@ -1,6 +1,6 @@
 # Azure Cosmos DB : Global Distribution and Consistency Levels
 
-Chris Joakim, Microsoft, Cosmos DB GBB
+**Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
 This presentation:
 https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distribution
