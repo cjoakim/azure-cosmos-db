@@ -134,14 +134,14 @@ https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distri
 ### Example Architecture
 
 <p align="center">
-    <img src="../img/global-distribution-deployment-topology.png" width="75%">
+    <img src="../img/global-distribution-deployment-topology.png" width="65%">
 </p>
 
 ---
 
 ### Regional Partitioning - Can I distribute my collection by shard/partition key?
 
-For example, partition key A in South America and Partition Key B in Europe.
+For example, Partition Key "A" in South America and Partition Key "B" in Europe?
 
 **No.  All data in a Cosmos DB container is distributed to all regions.**
 
@@ -194,7 +194,7 @@ Azure Cosmos DB offers **five well-defined consistency levels**. From strongest 
     <img src="../img/consistency-levels-ru-costs.png" width="95%">
 </p>
 
-**In short, 2x RU for Strong and Bounded Staleness**
+**In short, (RU * 2) for Strong and Bounded Staleness**
 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels#consistency-levels-and-throughput
@@ -256,7 +256,7 @@ The _etag is for OCC (Optimistic Concurrency Control)
 See https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/database-transactions-optimistic-concurrency
 
 ---
-
+---
 
 #### Cosmos DB Conflict Resolution (NoSQL API)
 
