@@ -7,7 +7,7 @@ https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distri
 
 ---
 
-### Azure Regions
+### Azure Global Regions
 
 <p align="center">
   <a href="https://infrastructuremap.microsoft.com/explore">
@@ -20,18 +20,6 @@ https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distri
   - https://azure.microsoft.com/en-us/explore/global-infrastructure/geographies/#geographies
 
 **Brazil South** region, with Availability Zones, since 2014, São Paulo State
-
----
-
-## Global Distribution
-
-### Azure Cosmos DB is a globally distributed database system that allows you to read and write data from the local replicas of your database. 
-
-### Azure Cosmos DB transparently replicates the data to all the regions associated with your Azure Cosmos DB account.
-
-### Azure Cosmos DB is a globally distributed database service that's designed to provide low latency, elastic scalability of throughput, data consistency, and high availability.
-
-### In short, if your application needs fast response time anywhere in the world, if it's required to be always online, and needs unlimited and elastic scalability of throughput and storage, you should build your application on Azure Cosmos DB.
 
 ---
 
@@ -49,6 +37,18 @@ https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/global_distri
 <p align="center">
     <img src="../img/datacenter-inside.jpeg" width="60%">
 </p>
+
+---
+
+## Cosmos DB Global Distribution
+
+### Azure Cosmos DB is a globally distributed database system that allows you to read and write data from the local replicas of your database. 
+
+### Azure Cosmos DB transparently replicates the data to all the regions associated with your Azure Cosmos DB account.
+
+### Azure Cosmos DB is a globally distributed database service that's designed to provide low latency, elastic scalability of throughput, data consistency, and high availability.
+
+### In short, if your application needs fast response time anywhere in the world, if it's required to be always online, and needs unlimited and elastic scalability of throughput and storage, you should build your application on Azure Cosmos DB.
 
 ---
 
