@@ -17,7 +17,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.azure:azure-cosmos:4.28.0'
     implementation 'com.azure:azure-storage-blob:12.16.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
     implementation 'com.github.javafaker:javafaker:1.0.2'
@@ -45,4 +44,10 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+}
+
+task crud(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'crud', 'dev', 'vehicle_activity'
 }

@@ -80,6 +80,12 @@ public class FileUtil {
         return mapper.readValue(Paths.get(infile).toFile(), Map.class);
     }
 
+    public List<Map> readJsonListOfMaps(String infile) throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(Paths.get(infile).toFile(), List.class);
+    }
+
     public boolean deleteFile(String filename) {
 
         File dirOrFile = new File(filename);

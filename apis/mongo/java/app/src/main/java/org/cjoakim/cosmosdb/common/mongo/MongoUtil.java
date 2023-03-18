@@ -44,7 +44,7 @@ public class MongoUtil {
 
         super();
         String connStr = getConnectionString();
-        log.error("connStr: " + connStr);
+        log.error("connStr: " + connStr.substring(0, 30) + "...");
 
         ConnectionString connectionString = new ConnectionString(connStr);
         MongoClientSettings settings = MongoClientSettings.builder()
@@ -249,6 +249,15 @@ public class MongoUtil {
             index = Indexes.compoundIndex(compoundIndex);
 
             return this.currentCollection.createIndex(index, new IndexOptions().unique(unique));
+        }
+    }
+
+    public void close() {
+
+        if (mongoClient != null) {
+            log.warn("closing mongoClient...");
+            mongoClient.close();
+            log.warn("mongoClient closed");
         }
     }
 }
