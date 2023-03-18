@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    //implementation 'com.azure:azure-cosmos:4.28.0'
+    implementation 'com.azure:azure-cosmos:4.28.0'
     implementation 'com.azure:azure-storage-blob:12.16.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
     implementation 'com.github.javafaker:javafaker:1.0.2'
@@ -41,35 +41,35 @@ dependencies {
 }
 
 application {
-    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    mainClass = 'org.cjoakim.cosmosdb.nosql.App'
 }
 
 task display_env(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    mainClass = 'org.cjoakim.cosmosdb.nosql.App'
     args 'display_env'
 }
 
 task database_and_container_crud(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    mainClass = 'org.cjoakim.cosmosdb.nosql.App'
     args 'database_and_container_crud', 'java', 'c1', '/pk', '400', '604800', 'manual'
 }
 
 task list_databases(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    mainClass = 'org.cjoakim.cosmosdb.nosql.App'
     args 'list_databases'
 }
 
 task create_database(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    mainClass = 'org.cjoakim.cosmosdb.nosql.App'
     args 'create_database', 'java'
 }
 
 task create_container(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    mainClass = 'org.cjoakim.cosmosdb.nosql.App'
     args 'create_container', 'java', 'test'
 }
