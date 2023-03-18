@@ -9,16 +9,14 @@ import org.bson.BsonObjectId;
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
-import com.mongodb.DBObject;
-import com.mongodb.BasicDBObjectBuilder;
 import org.cjoakim.cosmosdb.common.CommonConfig;
 import org.cjoakim.cosmosdb.common.CommonConstants;
 import org.cjoakim.cosmosdb.common.io.FileUtil;
 import org.cjoakim.cosmosdb.common.mongo.MongoUtil;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 
@@ -54,6 +52,9 @@ public class App implements CommonConstants {
                 case "crud":
                     crudOperationsExamples(dbName, cName);
                     break;
+                case "ttl":
+                    ttlExample(dbName, cName);
+                    break;
                 case "exception_handling":
                     exceptionHandlingExample(dbName, cName);
                     break;
@@ -88,6 +89,9 @@ public class App implements CommonConstants {
             log.warn("crudOperationsExamples...");
 
             HashMap hm = randomVehicleActivityMap();
+            hm.put("ttl", 60);  // specify the TTL of an individual document
+            // TTL, see https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
+
             String pk = (String) hm.get("pk");
             log.warn("raw HashMap:\n" + jsonValue(hm, true));
             InsertOneResult ir = mongoUtil.insertDoc(hm);
@@ -108,6 +112,58 @@ public class App implements CommonConstants {
                     log.warn("Response Document:\n" + (cursorIterator.next().toJson(jws)));
                     log.warn("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
                 }
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void ttlExample(String dbName, String cName) throws Exception {
+
+        try {
+            log.warn("ttlExample...");
+            // See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
+            // TTL Index for the Container is:
+            // db.getCollection("vehicle_activity").createIndex({"_ts":1}, {expireAfterSeconds: 3600})
+
+            HashMap hm = randomVehicleActivityMap();
+            hm.put("ttl", 5);  // <-- specify the TTL of an individual document; override the container TTL
+
+            String pk = (String) hm.get("pk");
+            log.warn("raw HashMap:\n" + jsonValue(hm, true));
+            InsertOneResult ir = mongoUtil.insertDoc(hm);
+            ObjectId oid = ((BsonObjectId) ir.getInsertedId()).getValue();
+            log.warn("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
+
+            Document queryDoc = new Document();
+            queryDoc.put("_id", oid.toHexString());
+            queryDoc.put("pk", pk);
+
+            log.warn("First find() on the new Document...");
+            FindIterable<Document> cursor = mongoUtil.getCurrentCollection().find(queryDoc);
+            try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
+                int docsReadCount = 0;
+                while (cursorIterator.hasNext()) {
+                    docsReadCount++;
+                    log.warn("Response Document:\n" + (cursorIterator.next().toJson(jws)));
+                }
+                log.warn("end of cursor; docsReadCount: " + docsReadCount);
+            }
+
+            int seconds = 20;
+            log.warn("sleeping for " + seconds + " seconds...");
+            Thread.sleep(seconds * 1000);  // sleep for 15-seconds
+
+            log.warn("Second find() on the new Document...");
+            FindIterable<Document> cursor2 = mongoUtil.getCurrentCollection().find(queryDoc);
+            try (final MongoCursor<Document> cursorIterator2 = cursor2.cursor()) {
+                int docsReadCount = 0;
+                while (cursorIterator2.hasNext()) {
+                    docsReadCount++;
+                    log.warn("Response Document:\n" + (cursorIterator2.next().toJson(jws)));
+                }
+                log.warn("end of cursor; docsReadCount: " + docsReadCount);
             }
         }
         catch (Exception e) {

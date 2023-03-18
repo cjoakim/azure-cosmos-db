@@ -51,3 +51,9 @@ task crud(type: JavaExec) {
     mainClass = 'org.cjoakim.cosmosdb.mongo.App'
     args 'crud', 'dev', 'vehicle_activity'
 }
+
+task ttl(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'ttl', 'dev', 'vehicle_activity'
+}
