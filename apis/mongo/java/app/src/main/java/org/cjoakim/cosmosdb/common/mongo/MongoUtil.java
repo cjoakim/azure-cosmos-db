@@ -1,6 +1,7 @@
 package org.cjoakim.cosmosdb.common.mongo;
 
 import com.mongodb.ConnectionString;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
@@ -149,6 +150,11 @@ public class MongoUtil {
     public Document findOne() {
 
         return this.currentCollection.find().first();
+    }
+
+    public FindIterable<Document> findByQuery(Document queryDoc) {
+
+        return this.currentCollection.find(queryDoc);
     }
 
     public FindIterable<Document> findByPk(String pk, boolean explain) {

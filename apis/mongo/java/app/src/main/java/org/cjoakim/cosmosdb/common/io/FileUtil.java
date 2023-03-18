@@ -7,10 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * This class implements common File IO operations.
@@ -80,7 +77,7 @@ public class FileUtil {
         return mapper.readValue(Paths.get(infile).toFile(), Map.class);
     }
 
-    public List<Map> readJsonListOfMaps(String infile) throws Exception {
+    public List<HashMap> readJsonListOfHashMaps(String infile) throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(Paths.get(infile).toFile(), List.class);
