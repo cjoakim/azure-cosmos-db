@@ -3,8 +3,9 @@ Usage:
   python main.py <func>
   python main.py env         <-- displays necessary environment variables
   python main.py test_suite  <-- executes a suite of CosmosDB Mongo API operations
-  python main.py create_customer_activity_stream <sleep_secs> <doc_count>
-  python main.py create_customer_activity_stream 0.5 100
+  python main.py create_vehicle_activity_stream <sleep_secs> <doc_count>
+  python main.py create_vehicle_activity_stream 0.5 100
+  python main.py create_vehicle_activity_data 10000   <-- create a JSON file for Java app
 Options:
   -h --help     Show this screen.
   --version     Show version.
@@ -30,7 +31,7 @@ from pysrc.mongo import Mongo
 
 def print_options(msg):
     print(msg)
-    arguments = docopt(__doc__, version=__version__)
+    arguments = docopt(__doc__, version='1.0.0')
     print(arguments)
 
 def check_env():
@@ -140,6 +141,24 @@ def test_suite():
     print('count_docs final ...')
     print(m.count_docs({}))
 
+def create_vehicle_activity_data():
+    doc_count = int(sys.argv[2])
+    activity_list = list()
+    Faker.seed(int(time.time()))
+    f = Faker()
+    f.add_provider(VehicleProvider)
+    for n in range(0, doc_count):
+        doc = dict()
+        tid = f.iban()
+        doc['pk'] = tid
+        doc['utc_time'] = str(datetime.utcnow())  #time.time()
+        doc['transponder'] = tid
+        doc['location'] = f.local_latlng()
+        doc['vehicle'] = f.vehicle_object()
+        doc['plate'] = f.license_plate()
+        activity_list.append(doc)
+    FS.write_json(activity_list, 'tmp/vehicle_activity_data.json')
+
 def create_vehicle_activity_stream():
     sleep_secs = float(sys.argv[2])
     doc_count  = int(sys.argv[3])
@@ -184,6 +203,8 @@ if __name__ == "__main__":
             test_suite()
         elif cli_func == 'create_vehicle_activity_stream':
             create_vehicle_activity_stream()
+        elif cli_func == 'create_vehicle_activity_data':
+            create_vehicle_activity_data()
         else:
             print_options('Error: invalid command-line function: {}'.format(cli_func))
     else:

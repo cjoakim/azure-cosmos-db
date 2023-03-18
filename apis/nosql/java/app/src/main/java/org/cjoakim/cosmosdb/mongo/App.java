@@ -1,4 +1,4 @@
-package org.cjoakim.cosmosdb.nosql;
+package org.cjoakim.cosmosdb.mongo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.cjoakim.cosmosdb.common.CommonConfig;
@@ -14,7 +14,7 @@ public class App implements CommonConstants {
     private static CosmosNosqlUtil cosmosNosqlUtil = null;
 
     public String getGreeting() {
-        return "org.cjoakim.cosmosdb.nosql";
+        return "org.cjoakim.cosmosdb.mongo";
     }
 
     public static void main(String[] args) {

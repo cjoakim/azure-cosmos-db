@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
- * This class implements MongoDB database operations, including the CosmosDB/Mongo API.
+ * This class implements MongoDB database operations, including the Cosmos DB Mongo API.
  *
  * Chris Joakim, Microsoft
  */
