@@ -3,10 +3,13 @@ package org.cjoakim.cosmosdb.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonObjectId;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 import org.cjoakim.cosmosdb.common.CommonConfig;
@@ -18,6 +21,9 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.set;
 
 
 @Slf4j
@@ -40,6 +46,8 @@ public class App implements CommonConstants {
             System.out.println("processType: " + processType);
 
             // Common setup logic
+            // - read the Vehicle Activity JSON file
+            // - create the MongoClient, MongoDatabase, MongoCollection in my class MongoUtil
             rawVehicleActivityData = readVehicleActivityData();
             System.out.println("rawVehicleActivityData read, document count: " + rawVehicleActivityData.size());
             getMongoUtil();
@@ -47,13 +55,12 @@ public class App implements CommonConstants {
             mongoUtil.setCurrentDatabase(dbName);
             mongoUtil.setCurrentCollection(cName);
 
-
             switch (processType) {
-                case "crud":
-                    crudOperationsExamples(dbName, cName);
-                    break;
                 case "ttl":
                     ttlExample(dbName, cName);
+                    break;
+                case "crud":
+                    crudOperationsExamples(dbName, cName);
                     break;
                 case "exception_handling":
                     exceptionHandlingExample(dbName, cName);
@@ -79,68 +86,23 @@ public class App implements CommonConstants {
         }
     }
 
-    /**
-     * See https://www.mongodb.com/developer/languages/java/java-setup-crud-operations/
-     * See https://www.baeldung.com/java-mongodb
-     */
-    private static void crudOperationsExamples(String dbName, String cName) throws Exception {
-
-        try {
-            System.out.println("crudOperationsExamples...");
-
-            HashMap hm = randomVehicleActivityMap();
-            hm.put("ttl", 60);  // specify the TTL of an individual document
-            // TTL, see https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
-
-            String pk = (String) hm.get("pk");
-            System.out.println("raw HashMap:\n" + jsonValue(hm, true));
-            InsertOneResult ir = mongoUtil.insertDoc(hm);
-            ObjectId oid = ((BsonObjectId) ir.getInsertedId()).getValue();
-            System.out.println("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
-            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
-
-            // db.getCollection("vehicle_activity").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
-            // db.getCollection("vehicle_activity").find({"_id" : ObjectId("6415c49fd6270153cf8785cf")})
-
-            Document queryDoc = new Document();
-            queryDoc.put("_id", oid.toHexString());
-            queryDoc.put("pk", pk);
-
-            FindIterable<Document> cursor = mongoUtil.getCurrentCollection().find(queryDoc);
-            try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
-                while (cursorIterator.hasNext()) {
-                    System.out.println("Response Document:\n" + (cursorIterator.next().toJson(jws)));
-                    System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
-                }
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private static void ttlExample(String dbName, String cName) throws Exception {
 
         try {
             System.out.println("ttlExample...");
-            // See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
-            // TTL Index for the Container is:
-            // db.getCollection("vehicle_activity").createIndex({"_ts":1}, {expireAfterSeconds: 3600})
+            HashMap haahMap = randomVehicleActivityMap();
+            haahMap.put("ttl", 5);  // <-- specify the TTL of an individual document; override the container TTL
 
-            HashMap hm = randomVehicleActivityMap();
-            hm.put("ttl", 5);  // <-- specify the TTL of an individual document; override the container TTL
-
-            String pk = (String) hm.get("pk");
-            System.out.println("----------\nraw HashMap:\n" + jsonValue(hm, true));
-            InsertOneResult ir = mongoUtil.insertDoc(hm);
+            String pk = (String) haahMap.get("pk");
+            System.out.println("----------\nraw HashMap:\n" + jsonValue(haahMap, true));
+            InsertOneResult ir = mongoUtil.insertDoc(haahMap);
             ObjectId oid = ((BsonObjectId) ir.getInsertedId()).getValue();
             System.out.println("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
 
+            System.out.println("----------\nFirst find() on the new Document...");
             Document queryDoc = new Document();
             queryDoc.put("_id", oid.toHexString());
             queryDoc.put("pk", pk);
-
-            System.out.println("----------\nFirst find() on the new Document...");
             FindIterable<Document> cursor = mongoUtil.getCurrentCollection().find(queryDoc);
             try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
                 int docsReadCount = 0;
@@ -164,6 +126,71 @@ public class App implements CommonConstants {
                     System.out.println("Response Document:\n" + (cursorIterator2.next().toJson(jws)));
                 }
                 System.out.println("end of cursor; docsReadCount: " + docsReadCount);
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * See https://www.mongodb.com/developer/languages/java/java-setup-crud-operations/
+     * See https://www.baeldung.com/java-mongodb
+     */
+    private static void crudOperationsExamples(String dbName, String cName) throws Exception {
+
+        try {
+            System.out.println("crudOperationsExamples...");
+
+            // Create the Document
+            HashMap hm = randomVehicleActivityMap();
+            String pk = (String) hm.get("pk");
+            System.out.println("----------\nraw HashMap:\n" + jsonValue(hm, true));
+            InsertOneResult ir = mongoUtil.insertDoc(hm);
+            ObjectId oid = ((BsonObjectId) ir.getInsertedId()).getValue();
+            System.out.println("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
+            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+
+            // Read the Document
+            Document queryDoc = new Document();
+            queryDoc.put("_id", oid.toHexString());
+            queryDoc.put("pk", pk);
+            FindIterable<Document> cursor = mongoUtil.getCurrentCollection().find(queryDoc);
+            try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
+                while (cursorIterator.hasNext()) {
+                    System.out.println("----------\nDocument after Insert:\n" + (cursorIterator.next().toJson(jws)));
+                    System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+                }
+            }
+
+            // Update the Document
+            Bson updateOperation = set("comment", "Vehicle was speeding; 97 mph in a 65 mph zone");
+            UpdateResult updateResult = mongoUtil.getCurrentCollection().updateOne(queryDoc, updateOperation);
+            System.out.println("----------\nUpdateOne - matched: " + updateResult.getMatchedCount() + ", modified: " + updateResult.getModifiedCount());
+            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+
+            // Read the Document again
+            cursor = mongoUtil.getCurrentCollection().find(queryDoc);
+            try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
+                while (cursorIterator.hasNext()) {
+                    System.out.println("----------\nDocument after Update:\n" + (cursorIterator.next().toJson(jws)));
+                    System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+                }
+            }
+
+            // Delete the Document
+            DeleteResult deleteResult = mongoUtil.getCurrentCollection().deleteOne(queryDoc);
+            System.out.println("----------\nDeleteOne - deleted count: " + deleteResult.getDeletedCount());
+            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+
+            // Read the Document again
+            System.out.println("----------\nAttempting to read the deleted document...");
+            cursor = mongoUtil.getCurrentCollection().find(queryDoc);
+            try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
+                while (cursorIterator.hasNext()) {
+                    System.out.println("----------\nDocument after Delete:\n" + (cursorIterator.next().toJson(jws)));
+                }
+                System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
             }
         }
         catch (Exception e) {

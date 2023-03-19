@@ -109,6 +109,8 @@ db.getCollection("sharded1").getIndexes()
 
 Cosmos DB created a hidden attribute named **_ts**.
 
+See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
+
 ### Create the TTL Index
 
 First, create the TTL index.  Expire documents in 1-hour (3600 seconds) by default.
@@ -235,13 +237,181 @@ end of cursor; docsReadCount: 0
 ```
 
 
+---
+
+## CRUD Operations, with RU Information
+
+See https://www.mongodb.com/docs/drivers/java/sync/current/usage-examples/updateOne/
+See https://www.mongodb.com/developer/languages/java/java-setup-crud-operations/
+
+``` 
+PS ...\java> gradle crud
+
+...
+processType: crud
+rawVehicleActivityData read, document count: 10000
+getMongoUtil creating instance...
+09:06:36.251 [main] ERROR MongoUtil - connStr: mongodb://gbbcjmongo:esv5gA83N...
+09:06:36.331 [main] WARN  MongoUtil - MongoClientSettings, app name: @gbbcjmongo@
+09:06:36.758 [main] WARN  MongoUtil - MongoClients.create ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=gbbcjmongo.mongo.cosmos.azure.com:10255, type=UNKNOWN, state=CONNECTING}]}
+using database: manual, container: sharded1
+crudOperationsExamples...
+----------
+raw HashMap:
+{
+  "pk" : "GB55KSCX64698313358989",
+  "utc_time" : "2023-03-18 12:08:16.091083",
+  "transponder" : "GB55KSCX64698313358989",
+  "location" : [ "41.0051", "-73.78458", "Scarsdale", "US", "America/New_York" ],
+  "vehicle" : {
+    "Year" : 2017,
+    "Make" : "Ram",
+    "Model" : "1500 Regular Cab",
+    "Category" : "Pickup"
+  },
+  "plate" : "JVM 089"
+}
+InsertOneResult, ObjectId toHexString(): 641708dc2ec1ee7667feddb6
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 20.88,
+  "RequestDurationInMilliSeconds" : 173,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 0,
+  "RetriedDueToRateLimiting" : false,
+  "ActivityId" : "09836179-fcc7-43de-b900-96e9c41d8673",
+  "ok" : 1.0
+}
+----------
+Document after Insert:
+{
+  "_id": {
+    "$oid": "641708dc2ec1ee7667feddb6"
+  },
+  "pk": "GB55KSCX64698313358989",
+  "utc_time": "2023-03-18 12:08:16.091083",
+  "transponder": "GB55KSCX64698313358989",
+  "location": [
+    "41.0051",
+    "-73.78458",
+    "Scarsdale",
+    "US",
+    "America/New_York"
+  ],
+  "vehicle": {
+    "Year": 2017,
+    "Make": "Ram",
+    "Model": "1500 Regular Cab",
+    "Category": "Pickup"
+  },
+  "plate": "JVM 089"
+}
+LastRequestStatistics:
+{
+  "CommandName" : "find",
+  "RequestCharge" : 1.0,
+  "RequestDurationInMilliSeconds" : 18,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 0,
+  "RetriedDueToRateLimiting" : false,
+  "ActivityId" : "7c1393a2-0722-4989-b3be-bb38ee77d4f0",
+  "ok" : 1.0
+}
+----------
+UpdateOne - matched: 1, modified: 1
+LastRequestStatistics:
+{
+  "CommandName" : "update",
+  "RequestCharge" : 11.67,
+  "RequestDurationInMilliSeconds" : 28,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 0,
+  "RetriedDueToRateLimiting" : false,
+  "ActivityId" : "37d99d99-5b7b-410e-b3d8-601b4d2b4b7f",
+  "ok" : 1.0
+}
+----------
+Document after Update:
+{
+  "_id": {
+    "$oid": "641708dc2ec1ee7667feddb6"
+  },
+  "pk": "GB55KSCX64698313358989",
+  "utc_time": "2023-03-18 12:08:16.091083",
+  "transponder": "GB55KSCX64698313358989",
+  "location": [
+    "41.0051",
+    "-73.78458",
+    "Scarsdale",
+    "US",
+    "America/New_York"
+  ],
+  "vehicle": {
+    "Year": 2017,
+    "Make": "Ram",
+    "Model": "1500 Regular Cab",
+    "Category": "Pickup"
+  },
+  "plate": "JVM 089",
+  "comment": "Vehicle was speeding; 97 mph in a 65 mph zone"
+}
+LastRequestStatistics:
+{
+  "CommandName" : "find",
+  "RequestCharge" : 1.0,
+  "RequestDurationInMilliSeconds" : 2,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 0,
+  "RetriedDueToRateLimiting" : false,
+  "ActivityId" : "38a41f8c-dd04-4a6d-9382-4d6d0ea7b595",
+  "ok" : 1.0
+}
+----------
+DeleteOne - deleted count: 1
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 10.1,
+  "RequestDurationInMilliSeconds" : 5,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 0,
+  "RetriedDueToRateLimiting" : false,
+  "ActivityId" : "66e22aa7-55f4-4d03-8fe1-28ed649e19f7",
+  "ok" : 1.0
+}
+----------
+Attempting to read the deleted document...
+LastRequestStatistics:
+{
+  "CommandName" : "find",
+  "RequestCharge" : 1.0,
+  "RequestDurationInMilliSeconds" : 2,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 0,
+  "RetriedDueToRateLimiting" : false,
+  "ActivityId" : "ab98ef9b-a135-437b-9cb3-3e3fcae59519",
+  "ok" : 1.0
+}
+09:06:38.847 [main] WARN  MongoUtil - closing mongoClient...
+09:06:38.884 [main] WARN  MongoUtil - mongoClient closed
+```
+
+### Know your RU Costs 
+
+In this example the RU costs were:
+
+``` 
+- Create:  20.88 RU
+- Read:     1.00 RU  (this was an efficient "point read" using _id and partition key)
+- Read:     1.00 RU  (also 1 RU to read a Document-not-Found)
+- Update:  11.67 RU
+- Delete:  10.10 RU
+```
+
 
 ---
 
-
-https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live#set-time-to-live-value-for-a-document
-globaldb:PRIMARY> db.coll.createIndex({"_ts":1}, {expireAfterSeconds: 10})
-
-db.getCollection("vehicle_activity").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
+## Mongo Shell Examples
 
 db.getCollection("sharded1").createIndex({"_ts":1}, {expireAfterSeconds: 3600})
+db.getCollection("sharded1").createIndex( {transponder : 1} )
+db.getCollection("sharded1").getIndexes()
+db.getCollection("sharded1").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
+
+
+---

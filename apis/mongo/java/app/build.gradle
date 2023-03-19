@@ -46,14 +46,14 @@ application {
     mainClass = 'org.cjoakim.cosmosdb.mongo.App'
 }
 
-task crud(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
-    args 'crud', 'manual', 'sharded1'
-}
-
 task ttl(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.cjoakim.cosmosdb.mongo.App'
     args 'ttl', 'manual', 'sharded1'
+}
+
+task crud(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'crud', 'manual', 'sharded1'
 }
