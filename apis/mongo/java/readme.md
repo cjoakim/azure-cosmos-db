@@ -270,6 +270,21 @@ end of cursor; docsReadCount: 0
 See https://www.mongodb.com/docs/drivers/java/sync/current/usage-examples/updateOne/
 See https://www.mongodb.com/developer/languages/java/java-setup-crud-operations/
 
+### Wait, how does the MongoDB SDK know about and return Cosmos DB Request Units?
+
+See class MongoUtil in this repo, file apis/mongo/java/app/src/main/java/org/cjoakim/cosmosdb/common/mongo/MongoUtil.java
+
+It uses the **getLastRequestStatistics command**.
+
+``` 
+    public Document getLastRequestStatistics() {
+
+        return this.currentDatabase.runCommand(new Document("getLastRequestStatistics", 1));
+    }
+```
+
+### Execute the Code 
+
 ``` 
 PS ...\java> gradle crud
 
