@@ -12,10 +12,10 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/apis/mon
 - CRUD Operations
 - Determine RU Costs of each database operation
 - Server Side Retry functionality in Cosmos DB Mongo API
-- Bulk Loads with a "Spike" profile
-- Bulk Deletes with a "Spike" profile
-- Bulk Loads with a "Flatter" profile to consume less RUs
-- Bulk Deletes with a "Flatter" profile to consume less RUs
+- Bulk Loads with a "Spike" profile Anti-Pattern
+- Bulk Deletes with a "Spike" profile Anti-Pattern
+- Bulk Loads with a "Flatter" profile Best-Practice to consume less RUs
+- Bulk Deletes with a "Flatter" profile Best-Practice to consume less RUs
 - Summary of Best Practices
 
 ---
@@ -31,7 +31,7 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/apis/mon
 
 ---
 
-## Default Index on just the _id attribute
+## Default Index is on just the _id attribute
 
 ``` 
 db.getCollection("sharded1").getIndexes()
@@ -136,7 +136,9 @@ This attribute is not hidden in the **Cosmos DB NoSQL** API.
 
 See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
 
-### Create the TTL Index
+### Create the TTL (Time-to-Live) Index
+
+Only do this if your application needs TTL functionality!
 
 First, create the TTL index.  Expire documents in 1-hour (3600 seconds) by default.
 
@@ -193,9 +195,9 @@ db.getCollection("sharded1").getIndexes()
 ### Execute the Java Program
 
 1) Create a document with the **ttl** attribute = 5 seconds
-2) Read the document - it is present
+2) Read the document; it is present
 3) Thread.sleep for a few seconds
-4) Read the document - it is no longer present; it was deleted by the TTL functionality.
+4) Read the document; it is no longer present; it was deleted by the TTL functionality.
 
 ```
 PS ...\java> gradle ttl
@@ -263,7 +265,7 @@ end of cursor; docsReadCount: 0
 
 ---
 
-## CRUD Operations, with RU Information
+## CRUD Operations, with RU (Request Unit) Information
 
 See https://www.mongodb.com/docs/drivers/java/sync/current/usage-examples/updateOne/
 See https://www.mongodb.com/developer/languages/java/java-setup-crud-operations/
@@ -421,7 +423,7 @@ In this example the RU costs were:
 
 ``` 
 - Create:  20.88 RU
-- Read:     1.00 RU  (this was an efficient "point read" using _id and partition key)
+- Read:     1.00 RU  (this was an efficient "point-read" using _id and partition key)
 - Read:     1.00 RU  (also 1 RU to read a Document-not-Found)
 - Update:  11.67 RU
 - Delete:  10.10 RU
@@ -429,11 +431,12 @@ In this example the RU costs were:
 
 ---
 
-## Bulk Inserts (Spike Profile)
+## Bulk Inserts (Spike Profile Anti-Pattern)
 
 ### The Code
 
-Variable "documents" is an ArrayList<Document> with 10,000 vehicle activity documents.
+Variable "documents" is an ArrayList<Document> with **10,000 vehicle activity documents**.
+
 See file data/common/vehicle_activity/vehicle_activity_data.json in this repo.
 
 ``` 
@@ -477,18 +480,14 @@ db.getCollection("sharded1").count({})
 
 ### The Results
 
-**it worked, due to the enabling the "Server Side Retry" Feature**
+**It worked, due to the enabling the "Server Side Retry" Feature**
 
 See the above **EstimatedDelayFromRateLimitingInMilliseconds** and **RequestDurationInMilliSeconds** values.
 The EstimatedDelayFromRateLimitingInMilliseconds is due to error code 429 errors
 
-In this example, **75% of the time was spent on retries**
+In this example, **75% of the time was spent on retries** (17679.0 / 23417.0)
 
 10,102 RUs / 23.417 seconds = **431.396 RU per second**
-
-```
-17679.0 / 23417.0 = 0.7549643421445958
-```
 
 - Links:
   - https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/prevent-rate-limiting-errors
@@ -497,7 +496,7 @@ In this example, **75% of the time was spent on retries**
 
 ---
 
-## Bulk Deletes (Spike Profile)
+## Bulk Deletes (Spike Profile Anti-Pattern)
 
 ``` 
 PS ...\java> gradle deleteManySpike
@@ -543,7 +542,7 @@ db.getCollection("sharded1").count({})
 
 **Timed-out at 60-seconds.**
 
-**Server Side Retry functionality worked to some degree**
+**Server Side Retry functionality worked to some degree.**
  
 2,681 of the 10,000 documents were deleted.
 
@@ -551,7 +550,7 @@ Be sure to add Exception-handling logic to your code to handle all Cosmos DB IO.
 
 ---
 
-## Bulk Inserts (Flatter Profile)
+## Bulk Inserts (Flatter Profile, Best-Practice)
 
 Load the data in smaller batches of Documents, with Thread.sleep after each batch.
 
@@ -674,6 +673,8 @@ LastRequestStatistics:
 
 ### The Results
 
+**Successful**
+
 **No Timeouts**
 
 **Lower RU Profile** - 1,010 RU mini-batches vs 10,102 RU "spike" (with potential timeout)
@@ -682,9 +683,10 @@ LastRequestStatistics:
  
 ---
 
-## Bulk Deletes (Flatter Profile)
+## Bulk Deletes (Flatter Profile, Best-Practice)
 
 Delete the documents in smaller batches of Documents, with Thread.sleep after each batch.
+
 Use a known set of values (i.e. - vehicle.Year) to execute the deletes for each year.
 
 ### The Code
@@ -804,13 +806,15 @@ LastRequestStatistics:
 
 ### The Results
 
+**Successful**
+
 **No Timeouts**
 
 **Lower RU Profile** - 2K to 4K mini-batches vs large RU "spike" (with potential timeout)
 
 **Server Side Retry functionality worked**
 
-### Grep the output for RequestCharge per for each Year
+### grep the output for RequestCharge per for each Year
 
 In this case the RequestCharge has a reasonable distribution.
 **But, be aware of the distribution/skews in your data.**
@@ -861,16 +865,19 @@ In this case the RequestCharge has a reasonable distribution.
 - TTL functionality can reduce your overall RU consumption
   - less data 
   - automatic queries and deletes
+- Point-Reads (query on _id and partition key) are very efficient in Cosmos DB
 
 ---
 
 ## Mongo Shell Examples
 
+```
 db.getCollection("sharded1").createIndex({"_ts":1}, {expireAfterSeconds: 3600})
 db.getCollection("sharded1").createIndex( {transponder : 1} )
 db.getCollection("sharded1").getIndexes()
 db.getCollection("sharded1").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
 db.getCollection("sharded1").count({})
+```
 
 ---
 
@@ -879,7 +886,7 @@ db.getCollection("sharded1").count({})
 - [Cosmos DB for MongoDB Developers, Manish Sharma](https://www.amazon.com/dp/1484247930)
 
 <p align="center">
-    <img src="../img/cosmosdb-for-mongodb-developers.jpeg" width="25%">
+    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/cosmosdb-for-mongodb-developers.jpeg" width="25%">
 </p>
 
 Please see the **Azure Cosmos DB for MongoDB documentation** at https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/
