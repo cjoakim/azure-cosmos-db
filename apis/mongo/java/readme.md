@@ -520,6 +520,130 @@ Timed-out at 60-seconds.
 
 ## Bulk Inserts (Flatter Profile)
 
+Load the data in smaller batches of Documents, with Thread.sleep after each batch.
+
+### The Code 
+
+``` 
+    // Configure these parameters per your application:
+    int  batchIndex  = 0;
+    int  batchSize   = 100;
+    long sleepMs     = 500;
+    boolean continueToProcess = true;
+
+    while (continueToProcess) {
+        ArrayList<Document> documentBatch = nextBatchOfDocuments(documents, batchIndex, batchSize);
+        if (documentBatch.size() > 0) {
+            System.out.println("Inserting " + documentBatch.size() + " documents in batch " + batchIndex);
+            InsertManyResult result = mongoUtil.getCurrentCollection().insertMany(documentBatch);
+            System.out.println("Inserted documents: " + result.getInsertedIds().size());
+            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+            Thread.sleep(sleepMs);
+        }
+        else {
+            continueToProcess = false;
+        }
+        batchIndex++;
+    }
+```
+
+### The Output
+
+``` 
+PS ...\java> gradle insertManyFlatter
+
+processType: insert_many_flatter
+rawVehicleActivityData read, document count: 10000
+getMongoUtil creating instance...
+10:43:38.833 [main] ERROR MongoUtil - connStr: mongodb://gbbcjmongo:esv5gA83N...
+10:43:38.913 [main] WARN  MongoUtil - MongoClientSettings, app name: @gbbcjmongo@
+10:43:39.332 [main] WARN  MongoUtil - MongoClients.create ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=gbbcjmongo.mongo.cosmos.azure.com:10255, type=UNKNOWN, state=CONNECTING}]}
+using database: manual, container: sharded1
+insertManyFlatter...
+Inserting 100 documents in batch 0
+Inserted documents: 100
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 1012.0000000000016,
+  "RequestDurationInMilliSeconds" : 1328,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 772,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "7005eea0-bae7-4d72-b71d-60ed1432bede",
+  "ok" : 1.0
+}
+Inserting 100 documents in batch 1
+Inserted documents: 100
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 1010.0000000000016,
+  "RequestDurationInMilliSeconds" : 1643,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 1150,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "91c7c9df-897e-47c4-8969-a1d3cf44b475",
+  "ok" : 1.0
+}
+Inserting 100 documents in batch 2
+Inserted documents: 100
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 1012.0000000000016,
+  "RequestDurationInMilliSeconds" : 1686,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 1189,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "82c8a6a4-3163-43bc-a2bb-d4ef7e33f995",
+  "ok" : 1.0
+}
+
+...
+
+Inserting 100 documents in batch 97
+Inserted documents: 100
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 1010.0000000000016,
+  "RequestDurationInMilliSeconds" : 1743,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 1232,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "b2dd96a2-35ed-4202-9e61-ebcea085b92c",
+  "ok" : 1.0
+}
+Inserting 100 documents in batch 98
+Inserted documents: 100
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 1012.0000000000016,
+  "RequestDurationInMilliSeconds" : 1714,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 1195,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "0c23d6e5-5b1a-40fd-9bdd-01b89554ebe5",
+  "ok" : 1.0
+}
+Inserting 100 documents in batch 99
+Inserted documents: 100
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 1010.0000000000016,
+  "RequestDurationInMilliSeconds" : 1727,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 1219,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "943b190b-59a0-4939-9372-0f3f48f04663",
+  "ok" : 1.0
+}
+10:47:29.642 [main] WARN  MongoUtil - closing mongoClient...
+10:47:29.684 [main] WARN  MongoUtil - mongoClient closed
+```
+
+### The Results
+
+- No Timeouts
+- Lower RU Profile - 1,010 RU mini-batches vs 10,102 RU "spike" operation
+
 ---
 
 ## Bulk Deletes (Flatter Profile)
