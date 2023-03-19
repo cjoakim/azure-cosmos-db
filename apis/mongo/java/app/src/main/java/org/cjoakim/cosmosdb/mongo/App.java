@@ -37,13 +37,13 @@ public class App implements CommonConstants {
             String processType = args[0];
             String dbName = args[1];
             String cName  = args[2];
-            log.warn("processType: " + processType);
+            System.out.println("processType: " + processType);
 
             // Common setup logic
             rawVehicleActivityData = readVehicleActivityData();
-            log.warn("rawVehicleActivityData read, document count: " + rawVehicleActivityData.size());
+            System.out.println("rawVehicleActivityData read, document count: " + rawVehicleActivityData.size());
             getMongoUtil();
-            log.warn("using database: " + dbName + ", container: " + cName);
+            System.out.println("using database: " + dbName + ", container: " + cName);
             mongoUtil.setCurrentDatabase(dbName);
             mongoUtil.setCurrentCollection(cName);
 
@@ -86,18 +86,18 @@ public class App implements CommonConstants {
     private static void crudOperationsExamples(String dbName, String cName) throws Exception {
 
         try {
-            log.warn("crudOperationsExamples...");
+            System.out.println("crudOperationsExamples...");
 
             HashMap hm = randomVehicleActivityMap();
             hm.put("ttl", 60);  // specify the TTL of an individual document
             // TTL, see https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
 
             String pk = (String) hm.get("pk");
-            log.warn("raw HashMap:\n" + jsonValue(hm, true));
+            System.out.println("raw HashMap:\n" + jsonValue(hm, true));
             InsertOneResult ir = mongoUtil.insertDoc(hm);
             ObjectId oid = ((BsonObjectId) ir.getInsertedId()).getValue();
-            log.warn("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
-            log.warn("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+            System.out.println("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
+            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
 
             // db.getCollection("vehicle_activity").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
             // db.getCollection("vehicle_activity").find({"_id" : ObjectId("6415c49fd6270153cf8785cf")})
@@ -109,8 +109,8 @@ public class App implements CommonConstants {
             FindIterable<Document> cursor = mongoUtil.getCurrentCollection().find(queryDoc);
             try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
                 while (cursorIterator.hasNext()) {
-                    log.warn("Response Document:\n" + (cursorIterator.next().toJson(jws)));
-                    log.warn("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+                    System.out.println("Response Document:\n" + (cursorIterator.next().toJson(jws)));
+                    System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
                 }
             }
         }
@@ -122,7 +122,7 @@ public class App implements CommonConstants {
     private static void ttlExample(String dbName, String cName) throws Exception {
 
         try {
-            log.warn("ttlExample...");
+            System.out.println("ttlExample...");
             // See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
             // TTL Index for the Container is:
             // db.getCollection("vehicle_activity").createIndex({"_ts":1}, {expireAfterSeconds: 3600})
@@ -131,39 +131,39 @@ public class App implements CommonConstants {
             hm.put("ttl", 5);  // <-- specify the TTL of an individual document; override the container TTL
 
             String pk = (String) hm.get("pk");
-            log.warn("raw HashMap:\n" + jsonValue(hm, true));
+            System.out.println("----------\nraw HashMap:\n" + jsonValue(hm, true));
             InsertOneResult ir = mongoUtil.insertDoc(hm);
             ObjectId oid = ((BsonObjectId) ir.getInsertedId()).getValue();
-            log.warn("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
+            System.out.println("InsertOneResult, ObjectId toHexString(): " + oid.toHexString());
 
             Document queryDoc = new Document();
             queryDoc.put("_id", oid.toHexString());
             queryDoc.put("pk", pk);
 
-            log.warn("First find() on the new Document...");
+            System.out.println("----------\nFirst find() on the new Document...");
             FindIterable<Document> cursor = mongoUtil.getCurrentCollection().find(queryDoc);
             try (final MongoCursor<Document> cursorIterator = cursor.cursor()) {
                 int docsReadCount = 0;
                 while (cursorIterator.hasNext()) {
                     docsReadCount++;
-                    log.warn("Response Document:\n" + (cursorIterator.next().toJson(jws)));
+                    System.out.println("Response Document:\n" + (cursorIterator.next().toJson(jws)));
                 }
-                log.warn("end of cursor; docsReadCount: " + docsReadCount);
+                System.out.println("end of cursor; docsReadCount: " + docsReadCount);
             }
 
             int seconds = 20;
-            log.warn("sleeping for " + seconds + " seconds...");
-            Thread.sleep(seconds * 1000);  // sleep for 15-seconds
+            System.out.println("sleeping for " + seconds + " seconds...");
+            Thread.sleep(seconds * 1000);
 
-            log.warn("Second find() on the new Document...");
+            System.out.println("----------\nSecond find() on the new Document...");
             FindIterable<Document> cursor2 = mongoUtil.getCurrentCollection().find(queryDoc);
             try (final MongoCursor<Document> cursorIterator2 = cursor2.cursor()) {
                 int docsReadCount = 0;
                 while (cursorIterator2.hasNext()) {
                     docsReadCount++;
-                    log.warn("Response Document:\n" + (cursorIterator2.next().toJson(jws)));
+                    System.out.println("Response Document:\n" + (cursorIterator2.next().toJson(jws)));
                 }
-                log.warn("end of cursor; docsReadCount: " + docsReadCount);
+                System.out.println("end of cursor; docsReadCount: " + docsReadCount);
             }
         }
         catch (Exception e) {
@@ -174,7 +174,7 @@ public class App implements CommonConstants {
     private static void exceptionHandlingExample(String dbName, String cName) throws Exception {
 
         try {
-            log.warn("exceptionHandlingExample...");
+            System.out.println("exceptionHandlingExample...");
             getMongoUtil();
         }
         catch (Exception e) {
@@ -185,7 +185,7 @@ public class App implements CommonConstants {
     private static void flatDeleteExample(String dbName, String cName) throws Exception {
 
         try {
-            log.warn("flatDeleteExample...");
+            System.out.println("flatDeleteExample...");
             getMongoUtil();
         }
         catch (Exception e) {
@@ -196,7 +196,7 @@ public class App implements CommonConstants {
     private static void flatLoadExample(String dbName, String cName) throws Exception {
 
         try {
-            log.warn("flatLoadExample...");
+            System.out.println("flatLoadExample...");
             getMongoUtil();
         }
         catch (Exception e) {
@@ -207,7 +207,7 @@ public class App implements CommonConstants {
     private static MongoUtil getMongoUtil() throws Exception {
 
         if (mongoUtil == null) {
-            log.warn("getMongoUtil creating instance...");
+            System.out.println("getMongoUtil creating instance...");
             mongoUtil = new MongoUtil();
         }
         return mongoUtil;
