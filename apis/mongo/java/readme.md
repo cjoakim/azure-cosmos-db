@@ -410,7 +410,7 @@ In this example the RU costs were:
 ### Enable the "Server Side Retry" Feature
 
 <p align="center">
-    <img src="../../presentations/img/gbbcjmongo-features.png" width="90%">
+    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/gbbcjmongo-features.png" width="90%">
 </p>
 
 ### The Code

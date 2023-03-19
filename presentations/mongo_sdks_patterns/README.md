@@ -2,8 +2,7 @@
 
 **Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
-This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/mongo_sdks_patterns
-
+See https://github.com/cjoakim/azure-cosmos-db/tree/main/apis/mongo/java
 
 ### Books
   
