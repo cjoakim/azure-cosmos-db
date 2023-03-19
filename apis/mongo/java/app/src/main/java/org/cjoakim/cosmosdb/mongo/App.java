@@ -68,14 +68,12 @@ public class App implements CommonConstants {
                 case "delete_many_spike":
                     deleteManySpike(dbName, cName);
                     break;
-
                 case "insert_many_flatter":
                     insertManyFlatter(dbName, cName);
                     break;
                 case "delete_many_flatter":
                     deleteManyFlatter(dbName, cName);
                     break;
-
                 default:
                     log.error("undefined processType: " + processType);
             }
@@ -251,10 +249,54 @@ public class App implements CommonConstants {
         try {
             System.out.println("insertManyFlatter...");
             getMongoUtil();
+
+            ArrayList<Document> documents = new ArrayList<>();
+            for (int i = 0; i < rawVehicleActivityData.size(); i++) {
+                HashMap hashMap = rawVehicleActivityData.get(i);
+                documents.add(new Document(hashMap));
+            }
+
+            // Configure these parameters per your application:
+            int  batchIndex  = 0;
+            int  batchSize   = 100;
+            long sleepMs     = 500;
+            boolean continueToProcess = true;
+
+            while (continueToProcess) {
+                ArrayList<Document> documentBatch = nextBatchOfDocuments(documents, batchIndex, batchSize);
+                if (documentBatch.size() > 0) {
+                    System.out.println("Inserting " + documentBatch.size() + " documents in batch " + batchIndex);
+                    InsertManyResult result = mongoUtil.getCurrentCollection().insertMany(documentBatch);
+                    System.out.println("Inserted documents: " + result.getInsertedIds().size());
+                    System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+                    Thread.sleep(sleepMs);
+                }
+                else {
+                    continueToProcess = false;
+                }
+                batchIndex++;
+            }
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getClass().getName() + " -> " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    private static ArrayList<Document> nextBatchOfDocuments(ArrayList<Document> documents, int batchIndex, int batchSize) {
+
+        ArrayList<Document> batch = new ArrayList<Document>();
+        int startIdx = batchIndex * batchSize;
+        int endIdx = startIdx + batchSize;
+        if (endIdx > (documents.size() - 1)) {
+            endIdx = documents.size();
+        }
+
+        for (int i = startIdx; i < endIdx; i++) {
+            HashMap hashMap = rawVehicleActivityData.get(i);
+            batch.add(documents.get(i));
+        }
+        return batch;
     }
 
     private static void deleteManyFlatter(String dbName, String cName) throws Exception {
