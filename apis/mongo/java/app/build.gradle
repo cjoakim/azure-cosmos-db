@@ -70,4 +70,14 @@ task deleteManySpike(type: JavaExec) {
     args 'delete_many_spike', 'manual', 'sharded1'
 }
 
+task insertManyFlatter(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'insert_many_flatter', 'manual', 'sharded1'
+}
 
+task deleteManyFlatter(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'delete_many_flatter', 'manual', 'sharded1'
+}

@@ -68,12 +68,14 @@ public class App implements CommonConstants {
                 case "delete_many_spike":
                     deleteManySpike(dbName, cName);
                     break;
-                case "flat_delete":
-                    flatDeleteExample(dbName, cName);
+
+                case "insert_many_flatter":
+                    insertManyFlatter(dbName, cName);
                     break;
-                case "flat_load":
-                    flatLoadExample(dbName, cName);
+                case "delete_many_flatter":
+                    deleteManyFlatter(dbName, cName);
                     break;
+
                 default:
                     log.error("undefined processType: " + processType);
             }
@@ -244,10 +246,10 @@ public class App implements CommonConstants {
             System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
         }
     }
-    private static void flatDeleteExample(String dbName, String cName) throws Exception {
+    private static void insertManyFlatter(String dbName, String cName) throws Exception {
 
         try {
-            System.out.println("flatDeleteExample...");
+            System.out.println("insertManyFlatter...");
             getMongoUtil();
         }
         catch (Exception e) {
@@ -255,10 +257,10 @@ public class App implements CommonConstants {
         }
     }
 
-    private static void flatLoadExample(String dbName, String cName) throws Exception {
+    private static void deleteManyFlatter(String dbName, String cName) throws Exception {
 
         try {
-            System.out.println("flatLoadExample...");
+            System.out.println("deleteManyFlatter...");
             getMongoUtil();
         }
         catch (Exception e) {
