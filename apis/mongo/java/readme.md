@@ -7,8 +7,11 @@
 - Time-to-Live (TTL)
 - CRUD Operations
 - Determine RU Costs of each database operation
-- Bulk Loads to consume less RU
-- Bulk Deletes to consume less RU
+- Bulk Loads with a "Spike" profile
+- Bulk Deletes with a "Spike" profile
+- Bulk Loads with a "Flatter" profile to consume less RUs
+- Bulk Deletes with a "Flatter" profile to consume less RUs
+- Summary of Best Practices
 
 ## Setup
 
@@ -523,12 +526,23 @@ Timed-out at 60-seconds.
 
 ---
 
+## Summary of Best Practices
+
+- Create Indexes for all queried attributes
+- For Sharded containers, create a Partition Key that is used in most of your queries
+- Use SDK functionality to know the actual cost, in Request Units, of your DB operations
+- Use the "Server Side Retry" Feature
+- Be aware of the 60-second operation timeout limitation
+- Use "flatter" bulk deletes and inserts to lower your RU consumption profile
+
+---
+
 ## Mongo Shell Examples
 
 db.getCollection("sharded1").createIndex({"_ts":1}, {expireAfterSeconds: 3600})
 db.getCollection("sharded1").createIndex( {transponder : 1} )
 db.getCollection("sharded1").getIndexes()
 db.getCollection("sharded1").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
-
+db.getCollection("sharded1").count({})
 
 ---
