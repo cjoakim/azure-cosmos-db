@@ -403,6 +403,123 @@ In this example the RU costs were:
 - Delete:  10.10 RU
 ```
 
+---
+
+## Bulk Inserts (Spike Profile)
+
+### Enable the "Server Side Retry" Feature
+
+<p align="center">
+    <img src="../../presentations/img/gbbcjmongo-features.png" width="90%">
+</p>
+
+### The Code
+
+Variable "documents" is an ArrayList<Document> with 10,000 vehicle activity documents.
+See file data/common/vehicle_activity/vehicle_activity_data.json in this repo.
+
+``` 
+InsertManyResult result = mongoUtil.getCurrentCollection().insertMany(documents);
+```
+
+### Execute the Program
+
+``` 
+PS ...\java> gradle insertManySpike
+
+> Task :app:insertManySpike
+processType: insert_many_spike
+getMongoUtil creating instance...
+09:26:16.988 [main] ERROR MongoUtil - connStr: mongodb://gbbcjmongo:esv5gA83N...
+09:26:17.067 [main] WARN  MongoUtil - MongoClientSettings, app name: @gbbcjmongo@
+09:26:17.467 [main] WARN  MongoUtil - MongoClients.create ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=gbbcjmongo.mongo.cosmos.azure.com:10255, type=UNKNOWN, state=CONNECTING}]}
+using database: manual, container: sharded1
+insertManySpike...
+Inserting 10000 documents
+Inserted documents: 10000
+LastRequestStatistics:
+{
+  "CommandName" : "insert",
+  "RequestCharge" : 10102.00000000019,
+  "RequestDurationInMilliSeconds" : 23417,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 17679,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "9265f3d5-f5df-4d6c-b5bb-10656541468d",
+  "ok" : 1.0
+}
+09:30:13.049 [main] WARN  MongoUtil - closing mongoClient...
+09:30:13.086 [main] WARN  MongoUtil - mongoClient closed
+```
+
+Count the documents in mongo shell:
+```
+db.getCollection("sharded1").count({})
+10000
+```
+
+### The Results
+
+In this case it worked, probably due to the enabling the "Server Side Retry" Feature.
+
+10,102 RUs / 23.417 seconds = 431.396 RU per second.
+
+---
+
+## Bulk Deletes (Spike Profile)
+
+``` 
+PS ...\java> gradle deleteManySpike
+
+> Task :app:deleteManySpike
+processType: delete_many_spike
+getMongoUtil creating instance...
+09:46:29.967 [main] ERROR MongoUtil - connStr: mongodb://gbbcjmongo:esv5gA83N...
+09:46:30.055 [main] WARN  MongoUtil - MongoClientSettings, app name: @gbbcjmongo@
+09:46:30.481 [main] WARN  MongoUtil - MongoClients.create ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=gbbcjmongo.mongo.cosmos.azure.com:10255, type=UNKNOWN, state=CONNECTING}]}
+using database: manual, container: sharded1
+deleteManySpike...
+Deleting documents ...
+com.mongodb.MongoWriteException -> Write operation error on server gbbcjmongo-eastus.mongo.cosmos.azure.com:10255. Write error: WriteError{code=50, message='Request timed out.', details={}}.
+com.mongodb.MongoWriteException: Write operation error on server gbbcjmongo-eastus.mongo.cosmos.azure.com:10255. Write error: WriteError{code=50, message='Request timed out.', details={}}.
+        at com.mongodb.client.internal.MongoCollectionImpl.executeSingleWriteRequest(MongoCollectionImpl.java:1018)
+        at com.mongodb.client.internal.MongoCollectionImpl.executeDelete(MongoCollectionImpl.java:983)
+        at com.mongodb.client.internal.MongoCollectionImpl.deleteMany(MongoCollectionImpl.java:530)
+        at com.mongodb.client.internal.MongoCollectionImpl.deleteMany(MongoCollectionImpl.java:525)
+        at org.cjoakim.cosmosdb.mongo.App.deleteManySpike(App.java:236)
+        at org.cjoakim.cosmosdb.mongo.App.main(App.java:69)
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 27299.24999999916,
+  "RequestDurationInMilliSeconds" : 59771,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 21729,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "5f961384-a9ad-4911-a232-6b2bcf665b9f",
+  "ok" : 1.0
+}
+```
+
+Count the documents in mongo shell:
+```
+db.getCollection("sharded1").count({})
+7319
+```
+
+### The Results
+
+In this case it failed, desipte enabling the "Server Side Retry" Feature.
+
+Timed-out at 60-seconds.
+
+2,681 of the 10,000 documents were deleted.
+
+---
+
+## Bulk Inserts (Flatter Profile)
+
+---
+
+## Bulk Deletes (Flatter Profile)
 
 ---
 

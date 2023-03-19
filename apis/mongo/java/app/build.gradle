@@ -57,3 +57,17 @@ task crud(type: JavaExec) {
     mainClass = 'org.cjoakim.cosmosdb.mongo.App'
     args 'crud', 'manual', 'sharded1'
 }
+
+task insertManySpike(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'insert_many_spike', 'manual', 'sharded1'
+}
+
+task deleteManySpike(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'delete_many_spike', 'manual', 'sharded1'
+}
+
+

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +18,11 @@ import org.cjoakim.cosmosdb.common.CommonConstants;
 import org.cjoakim.cosmosdb.common.io.FileUtil;
 import org.cjoakim.cosmosdb.common.mongo.MongoUtil;
 
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
 
 
@@ -62,8 +62,11 @@ public class App implements CommonConstants {
                 case "crud":
                     crudOperationsExamples(dbName, cName);
                     break;
-                case "exception_handling":
-                    exceptionHandlingExample(dbName, cName);
+                case "insert_many_spike":
+                    insertManySpike(dbName, cName);
+                    break;
+                case "delete_many_spike":
+                    deleteManySpike(dbName, cName);
                     break;
                 case "flat_delete":
                     flatDeleteExample(dbName, cName);
@@ -198,17 +201,49 @@ public class App implements CommonConstants {
         }
     }
 
-    private static void exceptionHandlingExample(String dbName, String cName) throws Exception {
+    private static void insertManySpike(String dbName, String cName) throws Exception {
 
         try {
-            System.out.println("exceptionHandlingExample...");
+            System.out.println("insertManySpike...");
             getMongoUtil();
+
+            ArrayList<Document> documents = new ArrayList<>();
+            for (int i = 0; i < rawVehicleActivityData.size(); i++) {
+                HashMap hashMap = rawVehicleActivityData.get(i);
+                documents.add(new Document(hashMap));
+            }
+            System.out.println("Inserting " + documents.size() + " documents");
+
+            InsertManyResult result = mongoUtil.getCurrentCollection().insertMany(documents);
+            System.out.println("Inserted documents: " + result.getInsertedIds().size());
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getClass().getName() + " -> " + e.getMessage());
+            e.printStackTrace();
+        }
+        finally {
+            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
         }
     }
 
+    private static void deleteManySpike(String dbName, String cName) throws Exception {
+
+        try {
+            System.out.println("deleteManySpike...");
+            getMongoUtil();
+
+            System.out.println("Deleting documents ...");
+            DeleteResult result = mongoUtil.getCurrentCollection().deleteMany(new Document());
+            System.out.println("Deleted " + result.getDeletedCount() + " documents");
+        }
+        catch (Exception e) {
+            System.out.println(e.getClass().getName() + " -> " + e.getMessage());
+            e.printStackTrace();
+        }
+        finally {
+            System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+        }
+    }
     private static void flatDeleteExample(String dbName, String cName) throws Exception {
 
         try {
