@@ -1,33 +1,5 @@
-# Azure Cosmos DB : Mongo API SDK Use and Patterns
+# Azure Cosmos DB : Mongo API Java SDK Use and Patterns
 
 **Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
-See https://github.com/cjoakim/azure-cosmos-db/tree/main/apis/mongo/java
-
-### Books
-  
-- [Cosmos DB for MongoDB Developers, Manish Sharma](https://www.amazon.com/dp/1484247930)
-
-<p align="center">
-    <img src="../img/cosmosdb-for-mongodb-developers.jpeg" width="30%">
-</p>
-
----
-
-## Further Reading
-
-Please see the **Azure Cosmos DB for MongoDB documentation** at https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/
-
----
----
-
-<p align="center">
-    <img src="../img/spacer-500.png" width="90%">
-</p>
-
-<p align="center">
-    <img src="../img/questions.png" width="90%">
-</p>
-
-
-A collection of examples and presentations on Azure Cosmos DB with multiple APIs, languages, and applications
+See https://github.com/cjoakim/azure-cosmos-db/tree/main/apis/mongo/java/readme.md

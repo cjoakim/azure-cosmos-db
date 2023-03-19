@@ -18,14 +18,16 @@ import org.cjoakim.cosmosdb.common.CommonConstants;
 import org.cjoakim.cosmosdb.common.io.FileUtil;
 import org.cjoakim.cosmosdb.common.mongo.MongoUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
+import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
 
-
+/**
+ * Entry-point for this demonstration application.
+ *
+ * Chris Joakim, Microsoft
+ */
 @Slf4j
 public class App implements CommonConstants {
 
@@ -43,11 +45,11 @@ public class App implements CommonConstants {
             String processType = args[0];
             String dbName = args[1];
             String cName  = args[2];
-            System.out.println("processType: " + processType);
+            System.out.println("processType: " + processType + ", dbName: " + dbName + ", cName: " + cName);
 
-            // Common setup logic
-            // - read the Vehicle Activity JSON file
-            // - create the MongoClient, MongoDatabase, MongoCollection in my class MongoUtil
+            // Common initialization logic:
+            // 1) read the Vehicle Activity JSON file into variable rawVehicleActivityData
+            // 2) create the MongoClient, MongoDatabase, MongoCollection in my class MongoUtil
             rawVehicleActivityData = readVehicleActivityData();
             System.out.println("rawVehicleActivityData read, document count: " + rawVehicleActivityData.size());
             getMongoUtil();
@@ -89,6 +91,9 @@ public class App implements CommonConstants {
         }
     }
 
+    /**
+     * Demonstrate the use of TTL (Time-to-Live)
+     */
     private static void ttlExample(String dbName, String cName) throws Exception {
 
         try {
@@ -137,6 +142,8 @@ public class App implements CommonConstants {
     }
 
     /**
+     * Demonstrate basic CRUD operations, with RU charges.
+     *
      * See https://www.mongodb.com/developer/languages/java/java-setup-crud-operations/
      * See https://www.baeldung.com/java-mongodb
      */
@@ -201,12 +208,13 @@ public class App implements CommonConstants {
         }
     }
 
+    /**
+     * Demonstrate the anti-pattern of a insertMany "spike" in RU consumption.
+     */
     private static void insertManySpike(String dbName, String cName) throws Exception {
 
         try {
             System.out.println("insertManySpike...");
-            getMongoUtil();
-
             ArrayList<Document> documents = new ArrayList<>();
             for (int i = 0; i < rawVehicleActivityData.size(); i++) {
                 HashMap hashMap = rawVehicleActivityData.get(i);
@@ -226,13 +234,13 @@ public class App implements CommonConstants {
         }
     }
 
+    /**
+     * Demonstrate the anti-pattern of a deleteMany "spike" in RU consumption.
+     */
     private static void deleteManySpike(String dbName, String cName) throws Exception {
 
         try {
             System.out.println("deleteManySpike...");
-            getMongoUtil();
-
-            System.out.println("Deleting documents ...");
             DeleteResult result = mongoUtil.getCurrentCollection().deleteMany(new Document());
             System.out.println("Deleted " + result.getDeletedCount() + " documents");
         }
@@ -244,12 +252,14 @@ public class App implements CommonConstants {
             System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
         }
     }
+
+    /**
+     * Demonstrate a better/flatter way to do bulk inserts with Cosmos DB Mongo API.
+     */
     private static void insertManyFlatter(String dbName, String cName) throws Exception {
 
         try {
             System.out.println("insertManyFlatter...");
-            getMongoUtil();
-
             ArrayList<Document> documents = new ArrayList<>();
             for (int i = 0; i < rawVehicleActivityData.size(); i++) {
                 HashMap hashMap = rawVehicleActivityData.get(i);
@@ -283,6 +293,9 @@ public class App implements CommonConstants {
         }
     }
 
+    /**
+     * Return the next batch of documents to be inserted.
+     */
     private static ArrayList<Document> nextBatchOfDocuments(ArrayList<Document> documents, int batchIndex, int batchSize) {
 
         ArrayList<Document> batch = new ArrayList<Document>();
@@ -299,15 +312,73 @@ public class App implements CommonConstants {
         return batch;
     }
 
+    /**
+     * Demonstrate a better/flatter way to do bulk deletes with Cosmos DB Mongo API.
+     */
     private static void deleteManyFlatter(String dbName, String cName) throws Exception {
 
         try {
             System.out.println("deleteManyFlatter...");
-            getMongoUtil();
+            Object[] yearValues = collectBatchFileModelYearValues();
+            long sleepMs = 100; // Configure as necessary per your application
+
+            for (int i = 0; i < yearValues.length; i++) {
+                int year = Integer.parseInt((String) yearValues[i]);
+                System.out.println("----------------------------------------");
+                Bson query = eq("vehicle.Year", year);
+                DeleteResult result = mongoUtil.getCurrentCollection().deleteMany(query);
+                System.out.println("Deleted " + result.getDeletedCount() + " documents in year: " + year);
+                System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+            }
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getClass().getName() + " -> " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * Scan a daily load file to identify the unique set of partition key values in the file.
+     * Return the keys as a Sorted Object[] of String values for potential bulk-deletes.
+     */
+    private static Object[] collectBatchFilePartitionKeys() {
+
+        HashMap<String, String> partitionKeyValues = new HashMap<String, String>();
+        String pkAttributeName = "pk";
+
+        for (int i = 0; i < rawVehicleActivityData.size(); i++) {
+            HashMap hashMap = rawVehicleActivityData.get(i);
+            if (hashMap.containsKey(pkAttributeName)) {
+                String pk = (String) hashMap.get(pkAttributeName);
+                partitionKeyValues.put(pk, "");
+            }
+        }
+        Object[] array = partitionKeyValues.keySet().toArray();
+        Arrays.sort(array);
+        return array;
+    }
+
+    /**
+     * Scan a daily load file to identify the unique set of vehicle.Year values in the file.
+     * Return the keys as a Sorted Object[] of String values for potential bulk-deletes.
+     */
+    private static Object[] collectBatchFileModelYearValues() {
+
+        HashMap<String, String> yearValues = new HashMap<String, String>();
+
+        for (int i = 0; i < rawVehicleActivityData.size(); i++) {
+            HashMap hashMap = rawVehicleActivityData.get(i);
+            if (hashMap.containsKey("vehicle")) {
+                HashMap vehicleMap = (HashMap) hashMap.get("vehicle");
+                if (hashMap.containsKey("vehicle")) {
+                    int year = (int) vehicleMap.get("Year");
+                    yearValues.put("" + year, "");
+                }
+            }
+        }
+        Object[] array = yearValues.keySet().toArray();
+        Arrays.sort(array);
+        return array;
     }
 
     private static MongoUtil getMongoUtil() throws Exception {
@@ -321,7 +392,6 @@ public class App implements CommonConstants {
 
     private static List<HashMap> readVehicleActivityData() throws Exception {
 
-        // C:\Users\chjoakim\github\azure-cosmos-db\apis\mongo\java\app
         String infile = "../../../../data/common/vehicle_activity/vehicle_activity_data.json";
         return new FileUtil().readJsonListOfHashMaps(infile);
     }
@@ -344,4 +414,3 @@ public class App implements CommonConstants {
         }
     }
 }
-

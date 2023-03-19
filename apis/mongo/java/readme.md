@@ -1,4 +1,8 @@
-# readme for apis/mongo/java 
+# Azure Cosmos DB : Mongo API Java SDK Use and Patterns
+
+**Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
+
+This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/apis/mongo/java/readme.md
 
 ## Topics Covered 
 
@@ -7,19 +11,23 @@
 - Time-to-Live (TTL)
 - CRUD Operations
 - Determine RU Costs of each database operation
+- Server Side Retry functionality in Cosmos DB Mongo API
 - Bulk Loads with a "Spike" profile
 - Bulk Deletes with a "Spike" profile
 - Bulk Loads with a "Flatter" profile to consume less RUs
 - Bulk Deletes with a "Flatter" profile to consume less RUs
 - Summary of Best Practices
 
-## Setup
+---
 
-- Cosmos DB Mongo API Provisioned Account
-- Create container **sharded1** in database **manual**.
+## Cosmos DB Configuration In These Examples
+
+- **Cosmos DB Mongo API Provisioned Account** (not Serverless)
+- Create **Sharded** container **sharded1** in database **manual**.
 - The container has the partition key **pk** 
 - The container has **400 manual Request Units (RUs)**
-- The container has the default indexing (no wildcards)
+- The container is created with default indexing (no wildcards)
+  - Indexes are explicitly added in this set of examples
 
 ---
 
@@ -106,11 +114,25 @@ db.getCollection("sharded1").getIndexes()
 ]
 ```
 
+## Enable the "Server Side Retry" Feature
+
+**This is a great feature of the Cosmos DB Mongo API!**
+
+It automatically retries DB operations n-number of times in the event of RU-throttling errors (i.e. - 429 error code).
+
+See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/prevent-rate-limiting-errors 
+
+<p align="center">
+    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/gbbcjmongo-features.png" width="90%">
+</p>
+
 ---
 
 ## TTL Example
 
-Cosmos DB created a hidden attribute named **_ts**.
+The Cosmos DB Mongo API creates a hidden attribute named **_ts** (epoch timestamp).
+
+This attribute is not hidden in the **Cosmos DB NoSQL** API.
 
 See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/time-to-live
 
@@ -173,7 +195,7 @@ db.getCollection("sharded1").getIndexes()
 1) Create a document with the **ttl** attribute = 5 seconds
 2) Read the document - it is present
 3) Thread.sleep for a few seconds
-4) Read the document - it is no longer present
+4) Read the document - it is no longer present; it was deleted by the TTL functionality.
 
 ```
 PS ...\java> gradle ttl
@@ -238,7 +260,6 @@ end of cursor; docsReadCount: 0
 08:21:25.472 [main] WARN  MongoUtil - closing mongoClient...
 08:21:25.511 [main] WARN  MongoUtil - mongoClient closed
 ```
-
 
 ---
 
@@ -394,7 +415,7 @@ LastRequestStatistics:
 09:06:38.884 [main] WARN  MongoUtil - mongoClient closed
 ```
 
-### Know your RU Costs 
+### Know your RU Costs for your Application and DB Operations
 
 In this example the RU costs were:
 
@@ -409,12 +430,6 @@ In this example the RU costs were:
 ---
 
 ## Bulk Inserts (Spike Profile)
-
-### Enable the "Server Side Retry" Feature
-
-<p align="center">
-    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/gbbcjmongo-features.png" width="90%">
-</p>
 
 ### The Code
 
@@ -462,9 +477,23 @@ db.getCollection("sharded1").count({})
 
 ### The Results
 
-In this case it worked, probably due to the enabling the "Server Side Retry" Feature.
+**it worked, due to the enabling the "Server Side Retry" Feature**
 
-10,102 RUs / 23.417 seconds = 431.396 RU per second.
+See the above **EstimatedDelayFromRateLimitingInMilliseconds** and **RequestDurationInMilliSeconds** values.
+The EstimatedDelayFromRateLimitingInMilliseconds is due to error code 429 errors
+
+In this example, **75% of the time was spent on retries**
+
+10,102 RUs / 23.417 seconds = **431.396 RU per second**
+
+```
+17679.0 / 23417.0 = 0.7549643421445958
+```
+
+- Links:
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/prevent-rate-limiting-errors
+  - https://learn.microsoft.com/en-us/rest/api/cosmos-db/http-status-codes-for-cosmosdb
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/troubleshoot-request-rate-too-large?tabs=resource-specific
 
 ---
 
@@ -510,11 +539,15 @@ db.getCollection("sharded1").count({})
 
 ### The Results
 
-In this case it failed, desipte enabling the "Server Side Retry" Feature.
+**In this case it failed, despite enabling the "Server Side Retry" Feature.**
 
-Timed-out at 60-seconds.
+**Timed-out at 60-seconds.**
 
+**Server Side Retry functionality worked to some degree**
+ 
 2,681 of the 10,000 documents were deleted.
+
+Be sure to add Exception-handling logic to your code to handle all Cosmos DB IO.
 
 ---
 
@@ -641,12 +674,178 @@ LastRequestStatistics:
 
 ### The Results
 
-- No Timeouts
-- Lower RU Profile - 1,010 RU mini-batches vs 10,102 RU "spike" operation
+**No Timeouts**
 
+**Lower RU Profile** - 1,010 RU mini-batches vs 10,102 RU "spike" (with potential timeout)
+
+**Server Side Retry functionality worked**
+ 
 ---
 
 ## Bulk Deletes (Flatter Profile)
+
+Delete the documents in smaller batches of Documents, with Thread.sleep after each batch.
+Use a known set of values (i.e. - vehicle.Year) to execute the deletes for each year.
+
+### The Code
+
+``` 
+      try {
+          System.out.println("deleteManyFlatter...");
+          Object[] yearValues = collectBatchFileModelYearValues();
+          long sleepMs = 100; // Configure as necessary per your application
+
+          for (int i = 0; i < yearValues.length; i++) {
+              int year = Integer.parseInt((String) yearValues[i]);
+              System.out.println("----------------------------------------");
+              Bson query = eq("vehicle.Year", year);
+              DeleteResult result = mongoUtil.getCurrentCollection().deleteMany(query);
+              System.out.println("Deleted " + result.getDeletedCount() + " documents in year: " + year);
+              System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
+          }
+      }
+      catch (Exception e) {
+          System.out.println(e.getClass().getName() + " -> " + e.getMessage());
+          e.printStackTrace();
+      }
+```
+
+### The Output
+
+``` 
+PS ...\java> gradle deleteManyFlatter
+
+> Task :app:deleteManyFlatter
+processType: delete_many_flatter, dbName: manual, cName: sharded1
+getMongoUtil creating instance...
+15:08:24.879 [main] ERROR MongoUtil - connStr: mongodb://gbbcjmongo:esv5gA83N...
+15:08:24.981 [main] WARN  MongoUtil - MongoClientSettings, app name: @gbbcjmongo@
+15:08:25.399 [main] WARN  MongoUtil - MongoClients.create ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=gbbcjmongo.mongo.cosmos.azure.com:10255, type=UNKNOWN, state=CONNECTING}]}
+using database: manual, container: sharded1
+deleteManyFlatter...
+----------------------------------------
+Deleted 298 documents in year: 1992
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 3213.4500000000053,
+  "RequestDurationInMilliSeconds" : 6102,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 3385,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "45af3ef6-8430-4989-8342-6549632f175c",
+  "ok" : 1.0
+}
+----------------------------------------
+Deleted 287 documents in year: 1993
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 3084.0200000000045,
+  "RequestDurationInMilliSeconds" : 8106,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 5148,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "b1ef9824-1547-4538-b9c0-44041453d1da",
+  "ok" : 1.0
+}
+----------------------------------------
+Deleted 267 documents in year: 1994
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 2876.6800000000044,
+  "RequestDurationInMilliSeconds" : 6180,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 3422,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "b1cd5d32-1263-4fd5-bd2f-46d74d332a67",
+  "ok" : 1.0
+}
+
+...
+
+----------------------------------------
+Deleted 443 documents in year: 2018
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 4505.1399999999985,
+  "RequestDurationInMilliSeconds" : 9716,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 2977,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "d097c01b-ced1-427a-ab20-f266be2ce714",
+  "ok" : 1.0
+}
+----------------------------------------
+Deleted 442 documents in year: 2019
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 4487.129999999999,
+  "RequestDurationInMilliSeconds" : 9616,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 3320,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "30a43eb4-035d-48f3-964f-bd94609f74e8",
+  "ok" : 1.0
+}
+----------------------------------------
+Deleted 231 documents in year: 2020
+LastRequestStatistics:
+{
+  "CommandName" : "delete",
+  "RequestCharge" : 2346.219999999994,
+  "RequestDurationInMilliSeconds" : 4973,
+  "EstimatedDelayFromRateLimitingInMilliseconds" : 1829,
+  "RetriedDueToRateLimiting" : true,
+  "ActivityId" : "9d80aedf-9c01-4912-987c-457f2c77d5c1",
+  "ok" : 1.0
+}
+15:12:21.010 [main] WARN  MongoUtil - closing mongoClient...
+15:12:21.045 [main] WARN  MongoUtil - mongoClient closed
+```
+
+### The Results
+
+**No Timeouts**
+
+**Lower RU Profile** - 2K to 4K mini-batches vs large RU "spike" (with potential timeout)
+
+**Server Side Retry functionality worked**
+
+### Grep the output for RequestCharge per for each Year
+
+In this case the RequestCharge has a reasonable distribution.
+**But, be aware of the distribution/skews in your data.**
+
+``` 
+  "RequestCharge" : 3213.4500000000053,
+  "RequestCharge" : 3084.0200000000045,
+  "RequestCharge" : 2876.6800000000044,
+  "RequestCharge" : 2801.0800000000045,
+  "RequestCharge" : 3150.020000000005,
+  "RequestCharge" : 2791.280000000005,
+  "RequestCharge" : 3109.620000000005,
+  "RequestCharge" : 3053.8000000000043,
+  "RequestCharge" : 3109.200000000004,
+  "RequestCharge" : 3477.8000000000047,
+  "RequestCharge" : 3492.4200000000046,
+  "RequestCharge" : 3425.6600000000058,
+  "RequestCharge" : 4096.890000000006,
+  "RequestCharge" : 3462.8900000000035,
+  "RequestCharge" : 4113.5900000000065,
+  "RequestCharge" : 3651.600000000006,
+  "RequestCharge" : 4201.030000000007,
+  "RequestCharge" : 3759.120000000004,
+  "RequestCharge" : 3530.150000000005,
+  "RequestCharge" : 3392.550000000005,
+  "RequestCharge" : 3993.000000000005,
+  "RequestCharge" : 3743.360000000005,
+  "RequestCharge" : 3918.7600000000034,
+  "RequestCharge" : 3972.390000000004,
+  "RequestCharge" : 4339.240000000005,
+  "RequestCharge" : 5099.52999999999,
+  "RequestCharge" : 4505.1399999999985,
+  "RequestCharge" : 4487.129999999999,
+  "RequestCharge" : 2346.219999999994,
+```
 
 ---
 
@@ -658,6 +857,10 @@ LastRequestStatistics:
 - Use the "Server Side Retry" Feature
 - Be aware of the 60-second operation timeout limitation
 - Use "flatter" bulk deletes and inserts to lower your RU consumption profile
+- Eliminate the RU consumption "spikes"
+- TTL functionality can reduce your overall RU consumption
+  - less data 
+  - automatic queries and deletes
 
 ---
 
@@ -670,3 +873,24 @@ db.getCollection("sharded1").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")}
 db.getCollection("sharded1").count({})
 
 ---
+
+### Books and Further Reading
+
+- [Cosmos DB for MongoDB Developers, Manish Sharma](https://www.amazon.com/dp/1484247930)
+
+<p align="center">
+    <img src="../img/cosmosdb-for-mongodb-developers.jpeg" width="25%">
+</p>
+
+Please see the **Azure Cosmos DB for MongoDB documentation** at https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/
+
+---
+---
+
+<p align="center">
+    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/spacer-500.png" width="90%">
+</p>
+
+<p align="center">
+    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/questions.png" width="90%">
+</p>
