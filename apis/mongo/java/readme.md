@@ -450,11 +450,10 @@ In this example the RU costs were:
 
 MongoDB operations like **insertMany** and **deleteMany** are apt to create **"Spikes"** in the 
 **RU Consumption Profile for your application** (red line).
-
 Strive to  **"Flatten"** (blue line) the **RU Consumption Profile** for **lower Cosmos DB costs**.
 
 <p align="center">
-    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/spike-and-flat-profiles.png" width="90%">
+    <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/spike-and-flat-profiles.png" width="100%">
 </p>
 
 ### The Code
