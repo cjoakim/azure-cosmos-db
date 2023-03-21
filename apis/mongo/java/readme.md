@@ -1074,6 +1074,7 @@ In this case the RequestCharge has a reasonable distribution.
 ## Summary of Best Practices
 
 - Create Indexes for all queried attributes
+- explain() your queries to ensure index utilization
 - For Sharded containers, create a Partition Key that is used in most of your queries
 - Use SDK functionality to know the actual cost, in Request Units, of your DB operations
 - Use the "Server Side Retry" Feature
