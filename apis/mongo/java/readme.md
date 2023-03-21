@@ -8,6 +8,7 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/apis/mon
 
 - Java with the **'org.mongodb:mongodb-driver-sync:4.4.1'** library
 - Indexing
+- explain() your queries to ensure index utilization
 - Time-to-Live (TTL)
 - CRUD Operations
 - Determine RU Costs of each database operation
@@ -125,6 +126,200 @@ See https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/prevent-rate-limit
 <p align="center">
     <img src="https://github.com/cjoakim/azure-cosmos-db/blob/main/presentations/img/gbbcjmongo-features.png" width="90%">
 </p>
+
+---
+
+## explain() your queries 
+
+**Best Practice: explain() your queries to ensure index utilization**.
+
+This results in lower Cosmos DB costs.
+
+``` 
+db.getCollection("sharded1").find({"pk" : "GB41FAHL15906924745293"}).explain()
+
+{
+    "command" : "db.runCommand({explain: { 'find' : 'sharded1', 'filter' : { 'pk' : 'GB41FAHL15906924745293' } }})",
+    "stages" : [
+        {
+            "stage" : "$query",
+            "timeInclusiveMS" : 4.0453,
+            "timeExclusiveMS" : 4.0453,
+            "in" : 1.0,
+            "out" : 1.0,
+            "dependency" : {
+                "getNextPageCount" : 1.0,
+                "count" : 1.0,
+                "time" : 0.0,
+                "bytes" : NumberLong(525)
+            },
+            "details" : {
+                "database" : "manual",
+                "collection" : "sharded1",
+                "query" : {
+                    "pk" : "GB41FAHL15906924745293"
+                },
+                "indexUsage" : {
+                    "pathsIndexed" : {
+                        "individualIndexes" : [
+                            "pk"                       <--- pk index utilized
+                        ],
+                        "compoundIndexes" : [
+
+                        ]
+                    },
+                    "pathsNotIndexed" : {
+                        "individualIndexes" : [
+
+                        ],
+                        "compoundIndexes" : [
+
+                        ]
+                    }
+                },
+                "shardInformation" : [
+                    {
+                        "activityId" : "a7398f1f-6092-45bb-ac24-55109220b78b",
+                        "shardKeyRangeId" : "[,FF) move next",
+                        "durationMS" : 3.1956,
+                        "preemptions" : 0.0,
+                        "outputDocumentCount" : 1.0,
+                        "retrievedDocumentCount" : 1.0
+                    }
+                ],
+                "queryMetrics" : {
+                    "retrievedDocumentCount" : 1.0,
+                    "retrievedDocumentSizeBytes" : 500.0,
+                    "outputDocumentCount" : 1.0,
+                    "outputDocumentSizeBytes" : 525.0,
+                    "indexHitRatio" : 1.0,
+                    "totalQueryExecutionTimeMS" : 0.5,
+                    "queryPreparationTimes" : {
+                        "queryCompilationTimeMS" : 0.09,
+                        "logicalPlanBuildTimeMS" : 0.03,
+                        "physicalPlanBuildTimeMS" : 0.07,
+                        "queryOptimizationTimeMS" : 0.01
+                    },
+                    "indexLookupTimeMS" : 0.08,
+                    "documentLoadTimeMS" : 0.03,
+                    "vmExecutionTimeMS" : 0.15,
+                    "runtimeExecutionTimes" : {
+                        "queryEngineExecutionTimeMS" : 0.03,
+                        "systemFunctionExecutionTimeMS" : 0.01,
+                        "userDefinedFunctionExecutionTimeMS" : 0.0
+                    },
+                    "documentWriteTimeMS" : 0.01
+                }
+            }
+        }
+    ],
+    "estimatedDelayFromRateLimitingInMilliseconds" : 0.0,
+    "retriedDueToRateLimiting" : false,
+    "totalRequestCharge" : 4.93,
+    "continuation" : {
+        "hasMore" : false
+    },
+    "ActivityId" : "d63efb43-ae7b-421a-a287-6c85f6a2b6d2",
+    "ok" : 1.0
+}
+```
+
+Query on an indexed attribute, for this example was **4.93** RU.
+
+### No Index Example
+
+``` 
+db.getCollection("sharded1").find({"name" : "GB41FAHL15906924745293"}).explain()
+
+{
+    "command" : "db.runCommand({explain: { 'find' : 'sharded1', 'filter' : { 'name' : 'GB41FAHL15906924745293' } }})",
+    "stages" : [
+        {
+            "stage" : "$query",
+            "timeInclusiveMS" : 58.1842,
+            "timeExclusiveMS" : 58.1842,
+            "in" : 0.0,
+            "out" : 0.0,
+            "dependency" : {
+                "getNextPageCount" : 1.0,
+                "count" : 1.0,
+                "time" : 0.0,
+                "bytes" : NumberLong(36)
+            },
+            "details" : {
+                "database" : "manual",
+                "collection" : "sharded1",
+                "query" : {
+                    "name" : "GB41FAHL15906924745293"
+                },
+                "indexUsage" : {
+                    "pathsIndexed" : {
+                        "individualIndexes" : [
+
+                        ],
+                        "compoundIndexes" : [
+
+                        ]
+                    },
+                    "pathsNotIndexed" : {
+                        "individualIndexes" : [
+                            "name"
+                        ],
+                        "compoundIndexes" : [
+
+                        ]
+                    }
+                },
+                "shardInformation" : [
+                    {
+                        "activityId" : "421a8ce2-a3e2-4a54-a2ab-3507b186c931",
+                        "shardKeyRangeId" : "[,FF) move next",
+                        "durationMS" : 55.5739,
+                        "preemptions" : 0.0,
+                        "outputDocumentCount" : 0.0,
+                        "retrievedDocumentCount" : 10000.0
+                    }
+                ],
+                "queryMetrics" : {
+                    "retrievedDocumentCount" : 10000.0,
+                    "retrievedDocumentSizeBytes" : 4953682.0,
+                    "outputDocumentCount" : 0.0,
+                    "outputDocumentSizeBytes" : 36.0,
+                    "indexHitRatio" : 0.0,
+                    "totalQueryExecutionTimeMS" : 53.68,
+                    "queryPreparationTimes" : {
+                        "queryCompilationTimeMS" : 0.07,
+                        "logicalPlanBuildTimeMS" : 0.03,
+                        "physicalPlanBuildTimeMS" : 0.06,
+                        "queryOptimizationTimeMS" : 0.0
+                    },
+                    "indexLookupTimeMS" : 0.0,
+                    "documentLoadTimeMS" : 45.36,
+                    "vmExecutionTimeMS" : 53.32,
+                    "runtimeExecutionTimes" : {
+                        "queryEngineExecutionTimeMS" : 7.96,
+                        "systemFunctionExecutionTimeMS" : 4.76,
+                        "userDefinedFunctionExecutionTimeMS" : 0.0
+                    },
+                    "documentWriteTimeMS" : 0.0
+                }
+            }
+        }
+    ],
+    "estimatedDelayFromRateLimitingInMilliseconds" : 0.0,
+    "retriedDueToRateLimiting" : false,
+    "totalRequestCharge" : 171.1,
+    "continuation" : {
+        "hasMore" : false
+    },
+    "ActivityId" : "10cc0079-d0ca-4d90-b308-7d56016b59f8",
+    "ok" : 1.0
+}
+```
+
+Query on an unindexed attribute, for this example was **171.1** RU.
+
+**171.1 / 4.93 = 34.7 times more expensive in RUs** in this example.
 
 ---
 
@@ -895,11 +1090,17 @@ In this case the RequestCharge has a reasonable distribution.
 ## Mongo Shell Examples
 
 ```
+db.getCollection("sharded1").find({})
 db.getCollection("sharded1").createIndex({"_ts":1}, {expireAfterSeconds: 3600})
 db.getCollection("sharded1").createIndex( {transponder : 1} )
 db.getCollection("sharded1").getIndexes()
 db.getCollection("sharded1").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
+db.getCollection("sharded1").find({"_id" : ObjectId("640e03cc74f91c0cf7885eda")})
+
 db.getCollection("sharded1").count({})
+
+db.getCollection("sharded1").find({"pk" : "GB41FAHL15906924745293"}).explain()
+db.getCollection("sharded1").find({"name" : "GB41FAHL15906924745293"}).explain()
 ```
 
 ---
