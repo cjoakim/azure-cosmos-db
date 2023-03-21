@@ -229,7 +229,7 @@ Query on an indexed attribute, for this example was **4.93** RU.
 ### No Index Example
 
 ``` 
-db.getCollection("sharded1").find({"name" : "GB41FAHL15906924745293"}).explain()
+db.getCollection("sharded1").find({"name" : "Chris Joakim"}).explain()
 
 {
     "command" : "db.runCommand({explain: { 'find' : 'sharded1', 'filter' : { 'name' : 'GB41FAHL15906924745293' } }})",
