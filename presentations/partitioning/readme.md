@@ -22,7 +22,7 @@
   - Cosmos DB may "shuffle" the logical partitions as necessary; with no perf impact
 
 <p align="center">
-    <img src="../img/cosmosdb-partitions.png" width="90%">
+    <img src="../img/cosmosdb-partitions.png" width="80%">
 </p>
 
 - Links
