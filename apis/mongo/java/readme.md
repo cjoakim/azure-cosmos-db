@@ -226,6 +226,51 @@ db.getCollection("sharded1").find({"pk" : "GB41FAHL15906924745293"}).explain()
 
 Query on an indexed attribute, for this example was **4.93** RU.
 
+### Point-Read Example
+
+``` 
+db.getCollection("sharded1").find({"_id" : ObjectId("6419af49abbf183d7ec9bc81"), "pk" : "GB41FAHL15906924745293"}).explain()
+
+{
+    "command" : "db.runCommand({explain: { 'find' : 'sharded1', 'filter' : { '_id' : ObjectId('6419af49abbf183d7ec9bc81'), 'pk' : 'GB41FAHL15906924745293' } }})",
+    "stages" : [
+        {
+            "stage" : "$pointLookup",
+            "timeInclusiveMS" : 21.0141,
+            "timeExclusiveMS" : 0.332,
+            "in" : 1.0,
+            "out" : 1.0,
+            "dependency" : {
+                "getNextPageCount" : 1.0,
+                "count" : 1.0,
+                "time" : 20.6821,
+                "bytes" : NumberLong(862)
+            },
+            "details" : {
+                "database" : "manual",
+                "collection" : "sharded1",
+                "items" : [
+                    {
+                        "id" : ObjectId("6419af49abbf183d7ec9bc81"),
+                        "shardKey" : "GB41FAHL15906924745293"
+                    }
+                ]
+            }
+        }
+    ],
+    "estimatedDelayFromRateLimitingInMilliseconds" : 0.0,
+    "retriedDueToRateLimiting" : false,
+    "totalRequestCharge" : 1.0,
+    "continuation" : {
+        "hasMore" : false
+    },
+    "ActivityId" : "a7abed12-05fc-45b5-88d0-4bb346897526",
+    "ok" : 1.0
+}
+```
+
+Notice the **$pointLookup state** in the output, and the **totalRequestCharge of 1.0**.
+
 ### No Index Example
 
 ``` 
@@ -1082,9 +1127,9 @@ In this case the RequestCharge has a reasonable distribution.
 - Use "flatter" bulk deletes and inserts to lower your RU consumption profile
 - Eliminate the RU consumption "spikes"
 - TTL functionality can reduce your overall RU consumption
-  - less data 
-  - automatic queries and deletes
-- Point-Reads (query on _id and partition key) are very efficient in Cosmos DB
+  - less data/storage in your container 
+  - automatic queries with deletes using unused RUs
+- Point-Reads (query on _id and partition key) are extremely efficient in Cosmos DB
 
 ---
 

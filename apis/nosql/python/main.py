@@ -5,7 +5,7 @@ Usage:
   python main.py test_suite  <-- executes a suite of CosmosDB SQL API operations
   python main.py create_json_files_for_emulator
   python main.py query_emulator
-  python main.py load_sales sales sales sales1.json 99999
+  python main.py load_sales retail sales sales1.json 99999
 Options:
   -h --help     Show this screen.
   --version     Show version.
@@ -49,8 +49,7 @@ def load_sales():
     print('load_sales; dbname: {}, cname: {} basename: {}, max_count:'.format(
         dbname, cname, basename, max_count))
 
-    repo_dir = Env.var('REPOS_ROOT_DIR')
-    infile   = '{}/azure-cosmos-db-playground/datagen/sales/data/retail/{}'.format(repo_dir, basename)
+    infile   = 'data/{}'.format(basename)
     print('infile: {}'.format(infile))
 
     opts = dict()
