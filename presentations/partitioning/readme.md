@@ -13,7 +13,7 @@
 - **Cosmos DB Manages the Physical Partitions**
 - **Terminology - Physical Partitions**
   - Up to 50GB of data
-  - Up to 10,000 Request Units (RUs)
+  - Up to 10,000 Request Units (RUs) of throughput
   - Cosmos DB creates these as your data grows, or you increase the RU setting
 - **Terminology - Logical Partitions**
   - The set of documents with a given partition key value
@@ -22,7 +22,7 @@
   - Cosmos DB may "shuffle" the logical partitions as necessary; with no perf impact
 
 <p align="center">
-    <img src="../img/cosmosdb-partitions.png" width="95%">
+    <img src="../img/cosmosdb-partitions.png" width="90%">
 </p>
 
 - Links
