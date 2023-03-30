@@ -12,6 +12,7 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
 
 - https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/troubleshoot-java-sdk-v4?tabs=sync#capture-the-diagnostics
 - https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/troubleshoot-dotnet-sdk#capture-diagnostics
+- https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/index-metrics
 
 ### Azure Monitor
 
