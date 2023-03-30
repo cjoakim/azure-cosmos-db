@@ -21,6 +21,12 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
 - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/monitor-azure-resource
 - https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/diagnostic-queries?tabs=resource-specific
 
+### App Insights
+
+- https://learn.microsoft.com/en-us/azure/azure-monitor/app/ilogger?tabs=dotnet6
+- https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics
+- https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#trackevent
+
 ---
 
 ### Sample Kusto Queries
