@@ -2,7 +2,7 @@
 
 **Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
-This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/change_feed
+This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presentations/logging
 
 ---
 
