@@ -76,3 +76,9 @@ task deleteManyFlatter(type: JavaExec) {
     mainClass = 'org.cjoakim.cosmosdb.mongo.App'
     args 'delete_many_flatter', 'manual', 'sharded1'
 }
+
+task timeouts(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cjoakim.cosmosdb.mongo.App'
+    args 'timeouts', 'manual', 'sharded1'
+}

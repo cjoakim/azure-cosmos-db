@@ -76,6 +76,8 @@ public class App implements CommonConstants {
                 case "delete_many_flatter":
                     deleteManyFlatter(dbName, cName);
                     break;
+                case "timeouts":
+                    timeouts(dbName, cName);
                 default:
                     log.error("undefined processType: " + processType);
             }
@@ -330,6 +332,25 @@ public class App implements CommonConstants {
                 System.out.println("Deleted " + result.getDeletedCount() + " documents in year: " + year);
                 System.out.println("LastRequestStatistics:\n" + jsonValue(mongoUtil.getLastRequestStatistics(), true));
             }
+        }
+        catch (Exception e) {
+            System.out.println(e.getClass().getName() + " -> " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test SDK timeout functionality.
+     */
+    private static void timeouts(String dbName, String cName) throws Exception {
+
+        try {
+            System.out.println("timeouts...");
+
+            insertManyFlatter(dbName, cName);
+
+            // TODO - get sample code and test it here
+            
         }
         catch (Exception e) {
             System.out.println(e.getClass().getName() + " -> " + e.getMessage());
