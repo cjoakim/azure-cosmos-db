@@ -12,26 +12,28 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree
     <img src="../img/change-feed.png" width="70%">
 </p>
 
-**The change feed in Azure Cosmos DB is a persistent record of changes to a container in the order they occur**
+**The Change Feed enables "Event-Driven" applications**
+
+**The Change Feed in Azure Cosmos DB is a persistent record of changes to a container in the order they occur**
 
 **The persisted changes can be processed asynchronously and incrementally, and the output can be distributed across one or more consumers for parallel processing**
 
 **The Change Feed is typically consumed with an Azure Function (see below)**
 
-**Change feed is enabled by default for all Azure Cosmos DB accounts**
+**Change Feed is enabled by default for all Azure Cosmos DB accounts**
 
-**The change feed includes inserts and update operations made to items within the container (not deletes)**
+**The Change Feed includes inserts and update operations made to items within the container (not deletes)**
 
 **You can capture deletes by setting a "soft-delete" flag within your documents**
 
-**With the Mongo API, it simulates MongoDB change-stream functionality**
+**With the Mongo API, it simulates MongoDB Change-Stream functionality**
 
 - Links
   - https://learn.microsoft.com/en-us/azure/cosmos-db/change-feed
 
 ### Mongo API 
 
-**Change feed support in Azure Cosmos DB’s API for MongoDB is available by using the Change Streams API.** 
+**Change Feed support in Azure Cosmos DB’s API for MongoDB is available by using the Change Streams API.** 
 
 **With the Mongo API use application code, rather than an Azure Function, to consume the stream.**
 
