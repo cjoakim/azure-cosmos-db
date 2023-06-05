@@ -18,6 +18,9 @@ def penguins():
 def barplot():
     sns.set_theme(style="whitegrid")
     penguins = sns.load_dataset("penguins")
+    print(str(type(penguins))) # <class 'pandas.core.frame.DataFrame'>
+    penguins.to_csv("tmp/penguins_df.csv")
+
     g = sns.catplot(
         data=penguins, kind="bar",
         x="species", y="body_mass_g", hue="sex",
@@ -31,6 +34,8 @@ def barplot():
 def boxplot():
     sns.set_theme(style="ticks", palette="pastel")
     tips = sns.load_dataset("tips")
+    print(str(type(tips)))
+    tips.to_csv("tmp/tips_df.csv")
 
     # Draw a nested boxplot to show bills by day and time
     sns.boxplot(x="day", y="total_bill",
