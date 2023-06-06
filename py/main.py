@@ -2,6 +2,7 @@
 import sys
 
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 
 
@@ -44,9 +45,35 @@ def boxplot():
     sns.despine(offset=10, trim=True)
     plt.savefig("tmp/boxplot.png")
 
-def plot():
-    print('plot')
+def physical_partition_plot(n):
+    # https://seaborn.pydata.org/generated/seaborn.catplot.html
+    infile = "partitions_case{}.csv".format(n)
+    outfile = "tmp/physical_partitions_{}.png".format(n)
+    sns.set_theme(style="whitegrid")
+    df = pd.read_csv(infile)
+    print(df)
 
+    g = sns.catplot(
+        data=df, kind="bar",
+        x="RU", y="GB", hue="partition_number",
+        errorbar="sd", palette="dark", alpha=.6, height=6
+    )
+    #g.despine(left=True)
+    g.set_axis_labels("GB", "RU")
+    g.legend.set_title("")
+    plt.savefig(outfile)
+
+def physical_partition_plot_v2(n):
+    # https://seaborn.pydata.org/generated/seaborn.catplot.html
+    infile = "partitions_case{}.csv".format(n)
+    outfile = "tmp/physical_partitions_{}.png".format(n)
+    sns.set_theme(style="whitegrid")
+    df = pd.read_csv(infile)
+    print(df)
+
+    sns.displot(data=df, x="GB")
+
+    plt.savefig(outfile)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -59,7 +86,9 @@ if __name__ == "__main__":
             barplot()
         elif func == 'boxplot':
             boxplot()
-        elif func == 'plot':
-            plot()
+        elif func == 'plot1':
+            physical_partition_plot(1)
+        elif func == 'plot2':
+            physical_partition_plot(2)
         else:
             print_options('Error: invalid function: {}'.format(func))
