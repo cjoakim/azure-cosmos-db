@@ -106,10 +106,14 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
     - Logical Partitions are the set of all documents with the same partition key in a container
     - Be aware of a 20 GB limit per Logical Partition
 
+- **Monitoring**
+  - See Azure Monitor in the next section 
+
 - **Indexing**
   - https://learn.microsoft.com/en-us/azure/cosmos-db/index-overview
   - https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/index-metrics?tabs=dotnet
-  - Index all attributes in the WHERE and ORDER BY clause 
+  - https://devblogs.microsoft.com/cosmosdb/new-ways-to-use-composite-indexes/
+  - Index all attributes in your query WHERE and ORDER BY clauses
   - Use Composite Indexes to optimize queries
 
 - **SDKs**
@@ -189,6 +193,12 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
     - Service-Managed is recommended
     - The account doesn't "fail back" to the original region
 
+- **Logging/Monitoring**
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/monitor?tabs=azure-diagnostics
+  - https://github.com/cjoakim/azure-cosmos-db/tree/main/presentations/logging
+  - **Kusto Query Language**
+    - https://learn.microsoft.com/en-us/azure/cosmos-db/monitor?tabs=azure-diagnostics#analyzing-logs
+
 ---
 
 ## Operational Best Practices
@@ -200,13 +210,34 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
   > with a single write region and at least a second (read) region and enable service-managed failover.
 
 - **Use Azure Monitor**
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/monitor?tabs=azure-diagnostics
+  - https://github.com/cjoakim/azure-cosmos-db/tree/main/presentations/logging
+
+  - Use the newer "Resource Specific" destination tables
+    - https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/resource-logs#resource-specific
 
 - **Use Azure Monitor Alerts**
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/create-alerts
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/create-alerts#common-alerting-scenarios
 
 - **Periodic/Weekly review of most expensive database operations in RUs**
+  - Keep a "top 10 list" for each application.  AppDev team iterates their queries/design.
+
+```
+    let topRequestsByRUcharge = CDBDataPlaneRequests 
+    | where TimeGenerated > ago(24h)
+    | project  RequestCharge , TimeGenerated, ActivityId;
+    CDBQueryRuntimeStatistics
+    | project QueryText, ActivityId, DatabaseName , CollectionName
+    | join kind=inner topRequestsByRUcharge on ActivityId
+    | project DatabaseName , CollectionName , QueryText , RequestCharge, TimeGenerated
+    | order by RequestCharge desc
+    | take 10
+```
 
 - **Periodic/Weekly review of largest logical partitions**
   - 20 GB Logical Partition Limit
+  - Alert at 15 GB
 
 - **Periodic/Weekly review of container sizes**
   - Organic growth of data without the corresponding RU increase
