@@ -16,7 +16,14 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
 
 ---
 
-## APIs, Features, Pricing, Architecture
+## Agenda 
+
+- Cosmos DB Overview - APIs, Features, Pricing, Architecture
+- Operational Best Practices
+
+---
+
+## Cosmos DB Overview - APIs, Features, Pricing, Architecture
 
 - **Why Cosmos DB?**
   - https://learn.microsoft.com/en-us/azure/cosmos-db/introduction#key-benefits
@@ -73,7 +80,6 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
         - Billed at highest rate per hour
         - Autoscale costs 50% more per RU, but pays for itself in most cases
 
-
 - **Partitioning and Horizontal Scaling**
 
   - **Cosmos DB uses a Partition Key to Horizontally Distrubute the data in a Container**
@@ -99,6 +105,12 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
     - https://learn.microsoft.com/en-us/azure/cosmos-db/partitioning-overview#logical-partitions
     - Logical Partitions are the set of all documents with the same partition key in a container
     - Be aware of a 20 GB limit per Logical Partition
+
+- **Indexing**
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/index-overview
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/index-metrics?tabs=dotnet
+  - Index all attributes in the WHERE and ORDER BY clause 
+  - Use Composite Indexes to optimize queries
 
 - **SDKs**
   - For the NoSQL and Table APIs use SDKs created by Microsoft
@@ -167,15 +179,25 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
     - Restore into same account is in preview mode 
       - https://learn.microsoft.com/en-us/azure/cosmos-db/restore-in-account-continuous-backup-introduction
 
-- **High-Availability with Regional Failover**
+- **High-Availability**
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/high-availability
   - 99.99% availability for single region account
   - 99.995% availability for single region account with availability zones
   - 99.999% availability for multiple region account
-  - 
+
+  - **Failover - Manual or Service-Managed**
+    - Service-Managed is recommended
+    - The account doesn't "fail back" to the original region
 
 ---
 
-## Best Practices
+## Operational Best Practices
+
+- **Use Service-Managed Failover for multi-region Cosmos DB accounts**
+  - But test the failover process by executing a Manual failover
+  - https://learn.microsoft.com/en-us/azure/cosmos-db/high-availability#tips-for-building-highly-available-applications
+  > To ensure high availability at all times, we recommend that you set up your Azure Cosmos DB account
+  > with a single write region and at least a second (read) region and enable service-managed failover.
 
 - **Use Azure Monitor**
 
@@ -194,3 +216,6 @@ This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presenta
   - Partition Merge is in Preview
     - https://learn.microsoft.com/en-us/azure/cosmos-db/merge?tabs=azure-powershell%2Cnosql
 
+- **Indexing**
+  - Be aware of index utilization
+    - https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/index-metrics?tabs=dotnet
