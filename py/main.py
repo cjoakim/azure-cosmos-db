@@ -1,3 +1,16 @@
+"""
+Exploring plots with matplotlib.pyplot and seaborn.
+Usage:
+  python main.py <func>
+  python main.py penguins
+  python main.py barplot
+  python main.py boxplot
+  python main.py plot1 n
+  python main.py plot2 n
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+"""
 
 import sys
 
@@ -6,8 +19,14 @@ import pandas as pd
 import seaborn as sns
 
 
+from docopt import docopt
+
+from pysrc.minbundle import Bytes, Counter, Env, FS, Storage, System
+
 def print_options(msg):
     print(msg)
+    arguments = docopt(__doc__, version='1.0.0')
+    print(arguments)
 
 def penguins():
     print('plot')

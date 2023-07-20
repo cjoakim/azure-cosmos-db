@@ -4,18 +4,46 @@
 #
 #    pip-compile --output-file='.\requirements.txt' '.\requirements.in'
 #
-arrow==0.17.0
+astroid==2.15.6
+    # via pylint
+azure-core==1.28.0
+    # via azure-storage-blob
+azure-storage-blob==12.17.0
     # via -r .\requirements.in
+certifi==2023.5.7
+    # via requests
+cffi==1.15.1
+    # via cryptography
+charset-normalizer==3.2.0
+    # via requests
+colorama==0.4.6
+    # via pylint
 contourpy==1.0.7
     # via matplotlib
+cryptography==41.0.2
+    # via azure-storage-blob
 cycler==0.11.0
     # via matplotlib
+dill==0.3.6
+    # via pylint
+docopt==0.6.2
+    # via -r .\requirements.in
 fonttools==4.39.4
     # via matplotlib
+idna==3.4
+    # via requests
+isodate==0.6.1
+    # via azure-storage-blob
+isort==5.12.0
+    # via pylint
 kiwisolver==1.4.4
     # via matplotlib
+lazy-object-proxy==1.9.0
+    # via astroid
 matplotlib==3.7.1
     # via seaborn
+mccabe==0.7.0
+    # via pylint
 numpy==1.24.3
     # via
     #   contourpy
@@ -28,20 +56,42 @@ pandas==2.0.2
     # via seaborn
 pillow==9.5.0
     # via matplotlib
+platformdirs==3.9.1
+    # via pylint
+psutil==5.9.5
+    # via -r .\requirements.in
+pycparser==2.21
+    # via cffi
+pylint==2.17.4
+    # via -r .\requirements.in
 pyparsing==2.4.7
     # via
     #   matplotlib
     #   packaging
 python-dateutil==2.8.2
     # via
-    #   arrow
     #   matplotlib
     #   pandas
 pytz==2021.1
     # via pandas
+requests==2.31.0
+    # via azure-core
 seaborn==0.12.2
     # via -r .\requirements.in
 six==1.15.0
-    # via python-dateutil
+    # via
+    #   azure-core
+    #   isodate
+    #   python-dateutil
+tomlkit==0.11.8
+    # via pylint
+typing-extensions==4.7.1
+    # via
+    #   azure-core
+    #   azure-storage-blob
 tzdata==2023.3
     # via pandas
+urllib3==2.0.4
+    # via requests
+wrapt==1.15.0
+    # via astroid
