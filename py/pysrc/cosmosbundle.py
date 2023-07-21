@@ -1,7 +1,7 @@
 """
 Module cosmosbundle.py - bundled standard codebase.
 Copyright (c) 2023 Chris Joakim, MIT License
-Timestamp: 2023-07-21 10:13
+Timestamp: 2023-07-21 10:48
 
 Usage:  from pysrc.cosmosbundle import Bytes, Cosmos, Counter, Env, FS, Storage, System, Template
 """
@@ -133,10 +133,13 @@ class Cosmos():
         self._dbproxy = None
         self._ctrproxy = None
         self._cname = None
-        self._query_metrics = False
         self.reset_record_diagnostics()
         url = opts['url']
         key = opts['key']
+        if 'enable_query_metrics' in opts.keys():
+            self._query_metrics = True
+        else:
+            self._query_metrics = False
         self._client = cosmos_client.CosmosClient(url, {'masterKey': key})
 
     def list_databases(self):

@@ -9,7 +9,9 @@ Options:
   --version     Show version.
 """
 
+import json
 import sys
+import traceback
 import uuid
 
 from docopt import docopt
@@ -22,9 +24,10 @@ def print_options(msg):
     print(arguments)
 
 def wrangle_hierarchical_zipcode_docs():
-    infile  = '../data/common/postal/postal_codes_us_filtered.csv'
-    outfile = '../data/common/postal/postal_codes_us_documents.json'
-    docs = FS.read_csv_as_dicts(infile)
+    infile   = '../data/common/postal/postal_codes_us_filtered.csv'
+    outfile1 = '../data/common/postal/postal_codes_us_documents.json'
+    outfile2 = '../data/common/postal/postal_codes_us_documents_flat.json'
+    docs, flatdocs = FS.read_csv_as_dicts(infile), []
 
     for doc in docs:
         try:
@@ -38,10 +41,19 @@ def wrangle_hierarchical_zipcode_docs():
             del doc['state_abbrv']
             del doc['city_name']
             del doc['postal_cd']
-            print(doc)
-        except:
-            pass
-    FS.write_json(docs, outfile)
+            flat = str(json.dumps(doc))
+            print(flat)
+            flatdocs.append(flat)
+        except Exception as e:
+            print("exception: {}".format(str(e)))
+            traceback.print_exc()
+
+    FS.write_json(docs, outfile1)
+    FS.write_lines(flatdocs, outfile2)
+
+    print(f'docs count:     {len(docs)}')
+    print(f'flatdocs count: {len(flatdocs)}')
+    
 
 def load_hierarchical_zipcode_docs(dbname, cname):
     print(f'load_hierarchical_zipcode_docs; dbname: {dbname} cname: {cname}')
@@ -70,7 +82,6 @@ def load_hierarchical_zipcode_docs(dbname, cname):
                 print(doc)
                 res = c.upsert_doc(doc)
                 print(res)
-
 
 
 if __name__ == "__main__":
