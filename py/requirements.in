@@ -1,4 +1,6 @@
 
+Jinja2
+azure-cosmos
 azure-storage-blob
 docopt
 psutil
