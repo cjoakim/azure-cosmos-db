@@ -2,7 +2,7 @@
 
 **Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
-This presentation: https://github.com/cjoakim/azure-cosmos-db-presentations/tree/main/partition_key_stats_logging
+This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presentations/partition_key_stats_logging
 
 ## The Cosmos DB Logging
 
