@@ -4,6 +4,16 @@
 
 This presentation: https://github.com/cjoakim/azure-cosmos-db/tree/main/presentations/partition_key_stats_logging
 
+## Solution Architecture
+
+Leverage PaaS services and cloud-native functionality.
+
+<p align="center">
+    <img src="../img/azure-monitor-long-term-data-retention.png" width="80%">
+</p>
+
+---
+
 ## The Cosmos DB Logging
 
 Configure the Cosmos DB account to log to Azure Monitor.
