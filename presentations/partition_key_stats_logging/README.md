@@ -46,8 +46,10 @@ img/spark-notebook-in-azure-synapse.png
 
 ---
 
+Output of the last cell in the Notebook.
+
 <p align="center">
-    <img src="../img/am-cdbpartitionkey-notebook-eoj.png" width="90%">
+    <img src="../img/am-cdbpartitionkey-notebook-eoj.png" width="80%">
 </p>
 
 ---
