@@ -54,12 +54,29 @@ Output of the last cell in the Notebook.
 
 ---
 
-## Next Steps - process the aggregated blob
+## Next Steps - Process the Aggregated Blob
 
 These are just a few of many options:
 
-- Import it into a relational database in Azure
-  - Azure SQL
-  - Azure Database for PostgreSQL
-  - Azure Cosmos DB for PostgreSQL
-- Process it with Spark
+- Process it with Spark in Azure Synapse; see Links below
+
+- Import it into a relational database in Azure:
+  - [Azure SQL](https://azure.microsoft.com/en-us/products/azure-sql/database)
+  - [Azure Database for PostgreSQL](https://azure.microsoft.com/en-us/products/postgresql)
+  - [Azure Cosmos DB for PostgreSQL](https://learn.microsoft.com/en-us/azure/cosmos-db/postgresql/introduction)
+
+- [Azure Machine Learning (AML)](https://azure.microsoft.com/en-us/products/machine-learning/)
+
+- Consider a weekly or monthly rollup/aggregation process
+
+---
+
+## Links
+
+- [Azure Synapse Analytics](https://azure.microsoft.com/en-us/products/synapse-analytics)
+- [Spark Notebooks in Azure Synapse Analytics](https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-development-using-notebooks)
+- [Azure Storage Explorer Deskop tool](https://azure.microsoft.com/en-us/products/storage/storage-explorer)
+- [Python Azure Storage SDK](https://learn.microsoft.com/en-us/python/api/overview/azure/storage?view=azure-python)
+- [Pandas Python Library](https://pandas.pydata.org/)
+- [Azure Cosmos DB](https://learn.microsoft.com/en-us/azure/cosmos-db/introduction)
+
