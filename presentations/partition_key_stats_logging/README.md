@@ -46,6 +46,12 @@ img/spark-notebook-in-azure-synapse.png
 
 ---
 
+<p align="center">
+    <img src="../img/am-cdbpartitionkey-notebook-eoj.png" width="90%">
+</p>
+
+---
+
 ## Next Steps - process the aggregated blob
 
 These are just a few of many options:
