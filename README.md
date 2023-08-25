@@ -115,5 +115,6 @@ AZURE_STORAGE_KEY
 
 ### Cosmos DB Blogs
 
+- [DevBlogs Cosmos DB](https://devblogs.microsoft.com/search?query=cosmosdb+)
 - [AltGraph – Graph workloads with Azure Cosmos DB for NoSQL](https://devblogs.microsoft.com/cosmosdb/altgraph-graph-workloads-with-azure-cosmos-db-for-nosql/)
 
