@@ -2,6 +2,7 @@
 
 # Links
 
+- https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-node
 - https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local
   - Azure Functions Core Tools v4 is recommended
   - Windows: Download and execute file func-cli-x64.msi
