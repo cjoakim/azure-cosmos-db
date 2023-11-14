@@ -10,6 +10,8 @@
 
 See https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=windows%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-typescript
 
+See https://github.com/Azure/azure-functions-nodejs-library
+
 
 ```
 PS ...\changefeed> func init ts --worker-runtime typescript --model V4
