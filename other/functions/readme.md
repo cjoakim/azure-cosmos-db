@@ -181,3 +181,17 @@ then scroll to "Azure Cosmos DB trigger" and hit enter
 ``` 
 > func start
 ```
+
+---
+
+### Typescript Function
+
+#### func init
+
+The new Node.js programming model is generally available.
+Learn more at https://aka.ms/AzFuncNodeV4
+
+```
+> func init ts --worker-runtime typescript --model V4 --docker
+```
+
