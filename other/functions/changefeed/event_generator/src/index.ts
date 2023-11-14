@@ -16,7 +16,7 @@ switch (func) {
 }
 
 async function createChangeFeedEvents() {
-    // node .\dist\index.js createChangeFeedEvents dev unittests --new-ids --sleep-ms:5000
+    // node .\dist\index.js createChangeFeedEvents dev unittests --new-ids --sleep-ms:3000
     let dbname  : string = process.argv[3];
     let cname   : string = process.argv[4];
     let newIds  : boolean = false;
@@ -28,7 +28,6 @@ async function createChangeFeedEvents() {
 
     for (let i = 0; i < process.argv.length; i++) {
         let arg : string = process.argv[i];
-        //console.log(util.format('  arg: %s : %s', i, arg));
         if (arg === '--new-ids') {
             newIds = true;
             console.log('newIds is true per command-line arg');
@@ -51,11 +50,11 @@ async function createChangeFeedEvents() {
     let cosmos : CosmosNoSqlUtil = new CosmosNoSqlUtil(
         'AZURE_COSMOSDB_NOSQL_URI',
         'AZURE_COSMOSDB_NOSQL_RW_KEY1');
-    // await cosmos.setCurrentDatabaseAsync(dbname);
-    // await cosmos.setCurrentContainerAsync(cname);
 
     let fu = new FileUtil();
-    let airports = fu.readJsonArrayFile('data/world-airports-50.json');
+    let infile = 'data/world-airports-50.json';
+    let airports = fu.readJsonArrayFile(infile);
+    console.log(util.format('%s airports loaded from infile %s', airports.length, infile));
 
     for (let i = 0; i < airports.length; i++) {
         console.log('---');
@@ -63,6 +62,7 @@ async function createChangeFeedEvents() {
         if (newIds) {
             doc['id'] = uuidv4();
         }
+        console.log('-');
         console.log(JSON.stringify(doc));
         if (load) {
             let createResp : ItemResponse<Object> = await cosmos.insertDocumentAsync(dbname, cname, doc);
@@ -75,6 +75,6 @@ async function createChangeFeedEvents() {
 
 function displayCommandLineExamples() {
     console.log('');
-    console.log("node .\\dist\\index.js createChangeFeedEvents <aaa> <bbb> <ccc>");
+    console.log("node .\\dist\\index.js createChangeFeedEvents dev unittests --new-ids --sleep-ms:3000");
     console.log('');
 }
