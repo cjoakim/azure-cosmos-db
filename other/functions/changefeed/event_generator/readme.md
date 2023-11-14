@@ -53,10 +53,14 @@ PS ...\event_generator> tsc
 ### Execute the Cosmos DB NoSQL API document loading stream
 
 ```
-PS ...\event_generator> node .\dist\index.js createChangeFeedEvents dev test --new-ids --sleep-ms:3000
+PS ...\event_generator> node .\dist\index.js createChangeFeedEvents dev events --new-ids --sleep-ms:3000
+
+--or--
+
+PS ...\event_generator> .\generate_events.ps1
 ```
 
-In this example **dev** is the name of the database, and **test** is the container
+In this example **dev** is the name of the database, and **events** is the container
 within the database.  The container is assumed to have the partition key attribute
 **/pk**.
 

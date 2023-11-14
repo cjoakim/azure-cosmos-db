@@ -31,7 +31,11 @@ Use the up/down arrow keys to select a template:Azure Cosmos DB trigger
 Function name: [cosmosDBTrigger]
 Creating a new file C:\Users\chjoakim\github\azure-cosmos-db\other\functions\changefeed\ts\src\functions\cosmosDBTrigger.ts
 The function "cosmosDBTrigger" was created successfully from the "Azure Cosmos DB trigger" template.
-
 ```
 
+---
+
+## Service Bus
+
+- https://learn.microsoft.com/en-us/javascript/api/overview/azure/service-bus?view=azure-node-latest
 
