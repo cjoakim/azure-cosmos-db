@@ -1,7 +1,8 @@
 {
-  "name": "",
+  "name": "TS-ChangeFeed",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cosmos DB Change-Feed Azure Function implemented in TypeScript",
+  "author": "Chris Joakim, Microsoft, 2023",
   "main": "dist/src/functions/*.js",
   "scripts": {
     "build": "tsc",

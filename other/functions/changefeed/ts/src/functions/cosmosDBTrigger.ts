@@ -1,27 +1,37 @@
-// import { app, InvocationContext } from "@azure/functions";
+// See https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?pivots=programming-language-javascript&tabs=python-v2%2Cisolated-process%2Cextensionv4%2Cnodejs-v4#example
 
-// export async function cosmosDBTrigger(documents: unknown[], context: InvocationContext): Promise<void> {
-//     context.log(`Cosmos DB function processed ${documents.length} documents`);
-// }
+import { app, InvocationContext } from '@azure/functions';
 
-// app.cosmosDB('cosmosDBTrigger', {
-//     connectionStringSetting: '',
-//     databaseName: '',
-//     collectionName: '',
-//     createLeaseCollectionIfNotExists: true,
-//     handler: cosmosDBTrigger
-// });
+export async function cosmosDBEventHandler(documents: unknown[], context: InvocationContext): Promise<void> {
+    if (documents) {
+        if (documents.length > 0) {
+            context.log(`${documents.length} documents passed to this Function invocation`);
+            for (let i = 0; i < documents.length; i++) {
+                let doc = documents[i];
+                if (doc) {
+                    await processDocument(doc, context);
+                }
+            }
+        }
+        else {
+            context.log("Error: zero documents passed to this Function invocation");
+        }
+    }
+    else {
+        context.log("Error: null documents passed to this Function invocation");
+    }
+}
 
-// Following from https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-cosmosdb-v2-trigger?pivots=programming-language-javascript&tabs=python-v2%2Cisolated-process%2Cextensionv4%2Cnodejs-v4#example
-
-const { app } = require('@azure/functions');
+async function processDocument(doc : unknown, context: InvocationContext) : Promise<void> {
+    context.log(JSON.stringify(doc, null, 2));
+    return;
+}
 
 app.cosmosDB('cosmosDBTrigger1', {
     connection: 'AZURE_COSMOSDB_NOSQL_CONN_STRING1',
     databaseName: 'dev',
     containerName: 'test',
     createLeaseContainerIfNotExists: true,
-    handler: (documents, context) => {
-        context.log(`Cosmos DB function processed ${documents.length} documents`);
-    },
+    maxItemsPerInvocation: 1,
+    handler: cosmosDBEventHandler
 });
