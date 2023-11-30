@@ -8,7 +8,7 @@ with multiple APIs, languages, and applications.
 URL: https://github.com/cjoakim/azure-cosmos-db
 
 <p align="center">
-    <img src="docs/img/cosmos-db-logo.png" width="50%">
+    <img src="docs/img/cosmos-db-logo.png" width="60%">
 </p>
 
 ---
@@ -35,8 +35,8 @@ URL: https://github.com/cjoakim/azure-cosmos-db
 - [ts-web @ GitHub](https://github.com/cjoakim/azure-cosmos-db-ts-web)
 - [ts-web @ DockerHub](https://hub.docker.com/r/cjoakim/azure-cosmos-db-ts-web-prod)
 - [Azure SDK for JavaScript](https://github.com/Azure/azure-sdk-for-js)
-- [aju-js package @ GitHub](https://github.com/cjoakim/azu-js) 
-- [aju-js package @ NPM](https://www.npmjs.com/package/azu-js/v/1.0.3) 
+- [azu-js package @ GitHub](https://github.com/cjoakim/azu-js) 
+- [azu-js package @ NPM](https://www.npmjs.com/package/azu-js/v/1.0.3) 
 
 #### azu-js NPM package
 
