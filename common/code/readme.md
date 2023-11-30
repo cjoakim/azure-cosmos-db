@@ -1,3 +1,0 @@
-# readme for common/code 
-
-
