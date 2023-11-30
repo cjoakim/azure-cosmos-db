@@ -5,8 +5,6 @@ with multiple APIs, languages, and applications.
 
 **Chris Joakim, Microsoft, Cosmos DB Global Back Belt (GBB)**
 
-URL: https://github.com/cjoakim/azure-cosmos-db
-
 <p align="center">
     <img src="docs/img/cosmos-db-logo.png" width="60%">
 </p>
